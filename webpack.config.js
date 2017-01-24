@@ -5,7 +5,11 @@ const plugins = [
         "process.env": {
             NODE_ENV: JSON.stringify("production")
         }
+   }),
+   new webpack.ProvidePlugin({
+       _: 'underscore'
    })
+
 ];
 
 if (process.env.NODE_ENV == 'production') {
@@ -17,7 +21,7 @@ if (process.env.NODE_ENV == 'production') {
 }
 
 const conf = {
-    entry: __dirname + '/src/start.js',
+    entry: __dirname + '/src/app.js',
     output: {
         path: __dirname + '/public/',
         filename: 'bundle.js'
@@ -26,6 +30,7 @@ const conf = {
     module: {
         loaders: [{
             test:  /\.js$/,
+            exclude: /node_modules/,
             loader: 'babel-loader',
             query: {
                 presets: [['es2015'], ['react']]
