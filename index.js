@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-var userData = require('./jsonsample.json');
+var userData = require('./jsonsample2.json');
 console.log(userData);
 
 if (process.env.NODE_ENV != 'production') {

@@ -8,11 +8,10 @@
     "location": "Berlin - Germany",
     "phone": "0157-30424045",
     "picture": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Elvis_Presley_Jailhouse_Rock2.jpg/175px-Elvis_Presley_Jailhouse_Rock2.jpg",
-    "collection":
-        {
-        "books":
+    "items":
             [
                 {
+                    "collection": "Books",
                     "name": "React: Up & Running: Building Web Applications",
                     "genre": "Technology",
                     "publisher": "O'Reilly Media",
@@ -23,6 +22,7 @@
                     "acquisition_price": 32.50
                 },
                 {
+                    "collection": "Books",
                     "name": "Angular 2 Development with TypeScript",
                     "genre": "Technology",
                     "publisher": "Manning Publications",
@@ -33,6 +33,7 @@
                     "acquisition_price": 42.74
                 },
                 {
+                    "collection": "Books",
                     "name": "The Call of the Wild",
                     "genre": "Classic Literature",
                     "publisher": "Manning Publications",
@@ -43,6 +44,7 @@
                     "acquisition_price": 42.74
                 },
                 {
+                    "collection": "Books",
                     "name": "Growth Hacker Marketing: A Primer on the Future of PR, Marketing, and Advertising",
                     "genre": "Marketing",
                     "publisher": "Portfolio",
@@ -51,11 +53,9 @@
                     "pages": 144,
                     "acquisition_date": "25/04/2014",
                     "acquisition_price": 7.98
-                }
-            ],
-        "games":
-            [
+                },
                 {
+                    "collection": "Games",
                     "platform": "Playstation 4",
                     "name": "Uncharted 4",
                     "genre": "Action",
@@ -66,6 +66,7 @@
                     "acquisition_price": 55.90
                 },
                 {
+                    "collection": "Games",
                     "platform": "Playstation 4",
                     "name": "Battlefield 1",
                     "genre": "FPS",
@@ -76,6 +77,7 @@
                     "acquisition_price": 55.90
                 },
                 {
+                    "collection": "Games",
                     "platform": "Super Nintendo",
                     "name": "Super Mario World",
                     "genre": "Platform",
@@ -86,6 +88,7 @@
                     "acquisition_price": 55.90
                 },
                 {
+                    "collection": "Games",
                     "platform": "Super Nintendo",
                     "name": "Super Mario Kart",
                     "genre": "Racing",
@@ -96,6 +99,7 @@
                     "acquisition_price": 55.90
                 },
                 {
+                    "collection": "Games",
                     "platform": "Playstation 2",
                     "name": "Grand Theft Auto: San Andreas",
                     "genre": "Action",
@@ -104,11 +108,9 @@
                     "imgUrl": "https://images-na.ssl-images-amazon.com/images/I/61x%2BigCf-xL.jpg",
                     "acquisition_date": "27/11/2004",
                     "acquisition_price": 40.90
-                }
-            ],
-        "movies":
-        [
+                },
             {
+                "collection": "Movies",
                 "media": "DVD",
                 "name": "The Secret Life of Pets ",
                 "genre": "Kids & Family",
@@ -117,6 +119,7 @@
                 "acquisition_price": 10.99
             },
             {
+                "collection": "Movies",
                 "media": "DVD",
                 "name": "Star Wars: Episode IV – A New Hope",
                 "genre": "Sci-fi",
@@ -125,6 +128,7 @@
                 "acquisition_price": 12.50
             },
             {
+                "collection": "Movies",
                 "media": "Bluray",
                 "name": "Star Wars: The Force Awakens",
                 "genre": "Sci-fi",
@@ -133,17 +137,16 @@
                 "acquisition_price": 10.99
             },
             {
+                "collection": "Movies",
                 "media": "Bluray",
                 "name": "Midnight in Paris",
                 "genre": "Romantic Comedy",
                 "imgUrl": "https://www.movieposter.com/posters/archive/main/145/MPW-72510",
                 "acquisition_date": "11/08/2011",
                 "acquisition_price": 15.00
-            }
-        ],
-        "music" :
-        [
+            },
             {
+                "collection": "Music",
                 "media": "CD",
                 "name": "Metallica",
                 "artist": "Metallica",
@@ -153,6 +156,7 @@
                 "acquisition_price": 10.99
             },
             {
+                "collection": "Music",
                 "media": "CD",
                 "name": "Fear of the Dark",
                 "artist": "Iron Maiden",
@@ -162,6 +166,7 @@
                 "acquisition_price": 12.50
             },
             {
+                "collection": "Music",
                 "media": "Vynil",
                 "name": "Sgt. Pepper's Lonely Hearts Club Band",
                 "artist": "The Beatles",
@@ -171,6 +176,7 @@
                 "acquisition_price": 10.99
             },
             {
+                "collection": "Music",
                 "media": "Vynil",
                 "name": "Abbey Road",
                 "artist": "Beatles",
@@ -180,5 +186,4 @@
                 "acquisition_price": 10.99
             }
         ]
-    }
 }
