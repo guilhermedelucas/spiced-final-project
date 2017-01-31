@@ -1,8 +1,9 @@
 import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Router, Route, IndexRoute, browserHistory} from 'react-router';
-import MainPageView from './components/mainpageview.js';
+import {hashHistory, Router, Route, IndexRoute, browserHistory} from 'react-router';
+import AddMoreStuff from './components/addmorestuff/addmorestuff';
+import MainPageView from './components/main/mainpageview.js';
 
 class MyApp extends React.Component {
 
@@ -23,6 +24,9 @@ class MyApp extends React.Component {
 
     ReactDOM.render(
             <Router history={browserHistory}>
-                <Route path="/" component={MainPageView}/>
+                    <Route name="mainview" path="/(:query)" component={MainPageView}/>
+                    <Route name="results" path="results:query" component={MainPageView}/>
+                <Route name="addmorestuff" path="addmorestuff/:query" component={AddMoreStuff}/>
+
             </Router>,
         document.getElementById('main'));

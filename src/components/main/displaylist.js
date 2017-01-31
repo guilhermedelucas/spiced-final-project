@@ -3,133 +3,140 @@ import List from './list';
 import queryString from 'query-string';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Item, Divider } from 'semantic-ui-react';
-import { bindActionCreator } from 'redux';
-import { connect } from 'react-redux';
-
+import { Button, Card, Divider, Icon, Image, Item  } from 'semantic-ui-react';
+import SideBarItems from './sidebaritems'
 
 
 export default class DisplayList extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            view: "grid",
+        }
+    }
+
+    toggleView(e) {
+        e.preventDefault();
+        if (this.state.view == "grid") {
+            this.setState ({
+                view: "list"
+            })
+        } else {
+            this.setState({
+                view: "grid"
+            })
+        }
+
     }
 
     render() {
-        let query = queryString.parse(this.props.query);
-        if (!_.isEmpty(query)) {
-            let genre = query.genre;
+            var query = this.props.query;
             let collection = query.collection;
-            if (genre && collection) {
-                console.log("there is genre");
+            let genre = query.genre;
+            if (!_.isEmpty(query)) {
+                if (genre && collection) {
+                    var groupByCollection = _.filter(this.props.userData.items, (item) => {
+                        return item.collection == collection && item.genre == genre
+                    });
+
+                    if (this.state.view == "grid") {
+                    var list = (
+                            <Item>
+                                <ul>
+                                    <h1>{collection.toUpperCase()} > {genre.toUpperCase()}</h1>
+                                    <List child={groupByCollection} view={this.state.view}/>
+                                </ul>
+                            </Item>)
+                        } else {
+                    var list = (
+                            <div>
+                                <h1>{collection.toUpperCase()}</h1>
+                                <List child={groupByCollection} view={this.state.view}/>
+                            </div>
+                            )
+                        }
+                } else if (collection) {
                 var groupByCollection = _.filter(this.props.userData.items, (item) => {
-                    return item.collection == collection && item.genre == genre
+                    return item.collection == collection
                 });
-                var list = (
+                if (this.state.view == "grid") {
+                    var list = (
+                            <Item>
+                                <ul>
+                                    <h1>{collection.toUpperCase()}</h1>
+                                    <List child={groupByCollection} view={this.state.view}/>
+                                </ul>
+                            </Item>)
+                        } else {
+                    var list = (
+                            <div>
+                                <h1>{collection.toUpperCase()}</h1>
+                                <List child={groupByCollection} view={this.state.view}/>
+                            </div>
+                            )
+                        }
+            }
+        } else {
+                var groupByCollection = _.groupBy(this.props.userData.items, "collection");
+                if (this.state.view == "grid") {
+                var list = _.keys(groupByCollection).map((item) => {
+                    return (
                         <Item>
                             <ul>
-                                <h1>{collection.toUpperCase()}</h1>
-                                <List child={groupByCollection} />
+                                <h1>{item.toUpperCase()}</h1>
+                                <List child={groupByCollection[item]} view={this.state.view}/>
                             </ul>
-                        </Item>)
-            } else if (collection) {
-            var groupByCollection = _.filter(this.props.userData.items, (item) => {
-                return item.collection == collection
-            });
-            var list = (
-                    <Item>
-                        <ul>
-                            <h1>{collection.toUpperCase()}</h1>
-                            <List child={groupByCollection} />
-                        </ul>
-                    </Item>)
-                }
-        } else {
-            var groupByCollection = _.groupBy(this.props.userData.items, "collection");
-            var list = _.keys(groupByCollection).map((item) => {
-                return (
-                    <Item>
-                        <ul>
-                            <h1>{item.toUpperCase()}</h1>
-                            <List child={groupByCollection[item]} />
-                        </ul>
-                    </Item>
+                        </Item>
+                        )
+                    })
+                } else {
+                    var list = _.keys(groupByCollection).map((item) => {
+                        return (
+                            <div>
+                                <h1>{item.toUpperCase()}</h1>
+                                <List child={groupByCollection[item]} view={this.state.view} style={{display: 'inline-flex',
+                    flexWrap: 'nowrap'}}/>
+                                <br/>
+                            </div>
+
                     )
                 })
+            }
         }
+
         return(
-            <Item.Group>
-                {list}
-            </Item.Group>
+            <div style={{width: "100vw", margin: "0",  maxWidth: "none", backgroundColor: "#373B44", height: "100vh"}}>
+                <div style={{backgroundColor: "rgb(28, 28, 28)", color: "white", position: "fixed", height: "100%", left: "0px", top: "0", width: "200px",     boxShadow: "-21px 16px 52px 21px rgba(0,0,0,0.4)", zIndex:2}}>
+                    <li className="item" style={{minWidth:"200px", listStyle: "none"}}>
+                        <img src="imgs/icons/logo.png" width="200px" style={{marginTop: "15px"}}/>
+                  </li>
+                  <Divider />
+                    <SideBarItems query={this.props.query}  />
+                </div>
+                <div style={content}>
+                    <div style={{position: "relative", width: "90%"}}>
+                    <Button onClick={this.toggleView.bind(this)} style={{marginLeft: "85%"}}>{ (this.state.view == "grid") ? (<i className="grid layout icon"></i>) : (<i className="list layout icon"></i>) }</Button>
+                    </div>
+                        <div>
+                            {
+                                (this.state.view == "grid") ? (
+                                    <Item.Group>
+                                        {list}
+                                    </Item.Group>
+                                ) : (
+                                    <div style={{margin: "14px 0", paddingLeft: "40px"}}>
+                                        {list}
+                                    </div>
+                                    )
+                            }
+                    </div>
+                </div>
+            </div>
         )
     }
 }
 
 
-
-
-
-// import React from 'react'
-// import { Card, Icon, Image } from 'semantic-ui-react'
-//
-// const CardExampleImageCard = () => (
-//   <div style={{display: "inline-flex"}}>
-//   <Card style={{width: "200px", margin: "10px"}}>
-//     <Image src='http://semantic-ui.com/images/avatar/large/daniel.jpg' />
-//     <Card.Content>
-//       <Card.Header>Daniel</Card.Header>
-//       <Card.Meta>Joined in 2016</Card.Meta>
-//       <Card.Description>Daniel is a comedian living in Nashville.</Card.Description>
-//     </Card.Content>
-//     <Card.Content extra>
-//       <a>
-//         <Icon name='user' />
-//         10 Friends
-//       </a>
-//     </Card.Content>
-//   </Card>
-//     <Card>
-//     <Image src='http://semantic-ui.com/images/avatar/large/daniel.jpg' />
-//     <Card.Content>
-//       <Card.Header>Daniel</Card.Header>
-//       <Card.Meta>Joined in 2016</Card.Meta>
-//       <Card.Description>Daniel is a comedian living in Nashville.</Card.Description>
-//     </Card.Content>
-//     <Card.Content extra>
-//       <a>
-//         <Icon name='user' />
-//         10 Friends
-//       </a>
-//     </Card.Content>
-//   </Card>
-//     <Card>
-//     <Image src='http://semantic-ui.com/images/avatar/large/daniel.jpg' />
-//     <Card.Content>
-//       <Card.Header>Daniel</Card.Header>
-//       <Card.Meta>Joined in 2016</Card.Meta>
-//       <Card.Description>Daniel is a comedian living in Nashville.</Card.Description>
-//     </Card.Content>
-//     <Card.Content extra>
-//       <a>
-//         <Icon name='user' />
-//         10 Friends
-//       </a>
-//     </Card.Content>
-//   </Card>
-//     <Card>
-//     <Image src='http://semantic-ui.com/images/avatar/large/daniel.jpg' />
-//     <Card.Content>
-//       <Card.Header>Daniel</Card.Header>
-//       <Card.Meta>Joined in 2016</Card.Meta>
-//       <Card.Description>Daniel is a comedian living in Nashville.</Card.Description>
-//     </Card.Content>
-//     <Card.Content extra>
-//       <a>
-//         <Icon name='user' />
-//         10 Friends
-//       </a>
-//     </Card.Content>
-//   </Card>
-//   </div>
-// )
-//
-// export default CardExampleImageCard
+const content = {
+    marginLeft:"200px", height: "100vh",  width: "100vw", position: "relative", backgroundColor:"white", overflow: "auto", zIndex: "1", boxShadow: "0px 5px 24px 0px rgba(0,0,0,0.1)"
+}
