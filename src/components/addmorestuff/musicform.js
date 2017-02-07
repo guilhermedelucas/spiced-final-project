@@ -1,21 +1,17 @@
 import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
+var Router = require('react-router');
 import { Button, Checkbox, Form, Input, Message, Radio, Select, TextArea } from 'semantic-ui-react';
 
 export default class MusicForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            formData: {},
-            value: {},
-            genre: "",
-            pages: "",
-            publisher: "",
-            acquisition_date: "",
-            acquisition_price: "",
-            borrow: ""
-        }
+            file: '',
+            imagePreviewUrl: '',
+            uploadSuccess: false
+        };
     }
 
     handleCollection(e) {
@@ -24,59 +20,143 @@ export default class MusicForm extends React.Component {
         })
     }
 
+    handleImageChange(e) {
+        e.preventDefault();
+        let reader = new FileReader();
+        let file = e.target.files[0];
+        reader.onloadend = () => {
+            this.setState({
+                file: file,
+                imagePreviewUrl: reader.result
+            });
+        }
+        reader.readAsDataURL(file)
+    }
+
     handleChange(e) {
         const target = e.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
-
-        console.log(e.target.value);
         this.setState({
             [name]: value
         });
-
     }
 
-    handleSubmit(e, { formData }){
-      e.preventDefault();
-      console.log(this.state);
-    //   this.setState({ formData })
+    handleSubmit(){
+        let { name, genre, media, artist, file, borrow} = this.state
+        var formData = new FormData();
+        formData.append('file', file);
+        axios.post('/insertdata/saveimage', formData, {
+            headers: {
+                'Content-Type': false
+            }
+        }).then((response) => {
+            console.log(response);
+            if (response.data.success) {
+                axios.post('/insertdata/addmusic', {name, genre, media, artist, imgUrl: response.data.file, collection: this.props.query}, borrow).
+                then((response) => {
+                    if (response.data.success) {
+                        this.setState({
+                            uploadSuccess: true
+                        })
+                        setTimeout(() => {Router.browserHistory.push('/results?collection=Music')}, 1000);
+                    }
+                    console.log("worked");
+                })
+            } else {
+                console.log("didin't worked");
+            }
+        });
     }
 
     render() {
-
+        let { imagePreviewUrl } = this.state;
+        let $imagePreview = null;
+        if (imagePreviewUrl) {
+            $imagePreview = (<img src={imagePreviewUrl} style={{borderRadius: "15px", width: "100%"}}/>);
+        } else {
+            $imagePreview = (<div className="previewText" style={{color: "rgb(102, 102, 102)", fontWeigth: "bold"}}>Please select an Image for Preview</div>);
+        }
         return (
-            <div class="ui grid">
-                <div class="four wide column">
-                    <Form onSubmit={this.handleSubmit.bind(this)}>
-                        <Form.Group widths='equal'>
-                            <input label='Title' name='title' placeholder='Title' />
-                        </Form.Group>
-                    <div>
-                        <h3>Artist</h3>
-                        <input label='artist' name='artist' placeholder='Inform the artist'/>
-                        <h3>Genre</h3>
-                        <input label='genre' name='genre' placeholder='Inform the genre'/>
-                        <h3>Media</h3>
-                        <select value={this.state.moviesmedia}>
-                            <option value="CD">CD</option>
-                            <option value="K7">K7</option>
-                            <option value="Vynil">Vynil</option>
-                        </select>
-                        <h3>Acquisition Date</h3>
-                        <input label='AcquisitionDate' name='AcquisitonDate' placeholder='Inform the Acquisiton Date, format DD:MM:YYYY'/>
-                        <h3>Acquisition Price</h3>
-                        <input label='AcquisitionPrice' name='AcquisitonPrice' placeholder='Inform the Acquisiton Price, format DD:MM:YYYY'/>
-                        <h3>Item is available to borrow?</h3>
-                        <select value={this.state.borrow}>
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
+            <div className="ui raised very padded text container segment" style={{marginTop: "50px"}}>
+            <h2>{this.props.title}</h2>
+                <h4>Title</h4>
+                <input label='Title' onChange={this.handleChange.bind(this)} style={inputStyle} name='name' placeholder='Insert the title' value={this.state.name}/>
+                <div className="imgPreview" style={{width: "100%", paddingTop: "35px"}}>
+                    {$imagePreview}
+                </div>
+                <h4>Image</h4>
+                <input className="fileInput" type="file" onChange={(e) => this.handleImageChange(e)} />
+                <h4>Genre</h4>
+                    <select className="ui fluid dropdown" name="genre" style={inputStyle} onChange={this.handleChange.bind(this)} value={this.state.genre}>
+                        {_.map(musicGenres, (item) => {
+                            return (
+                            <option value={item}>{item}</option>
+                            )}
+                        )}
+                    </select>
+                <div style={{display: "inline-flex", width: "100%"}}>
+                    <div style={{paddingTop: "24px", paddingRight: "30px", flexGrow: "1"}}>
+                        <h4>Media</h4>
+                            <select className="ui fluid dropdown" name="media" style={inputStyle} onChange={this.handleChange.bind(this)} value={this.state.media}>
+                                    <option value="">Select the media</option>
+                                    <option value="CD">CD</option>
+                                    <option value="DVD">DVD</option>
+                                    <option value="Blu-ray">Blu-ray</option>
+                                    <option value="Vynil">Vynil</option>
+                                    <option value="K7">K7</option>
+                            </select>
+                    </div>
+                    <div style={{paddingTop: "24px", paddingRight: "30px", flexGrow: "2"}}>
+                        <h4>Artist</h4>
+                        <input label='developer' style={inputStyle} onChange={this.handleChange.bind(this)} name='artist' placeholder='Inform the main Actors' value={this.state.artist}/>
+                    </div>
+                </div>
+                <div style={{display: "inline-flex", width: "100%"}}>
+                    <div style={{paddingTop: "24px", flexGrow: ".5"}}>
+                        <h4>Item is available to borrow?</h4>
+                        <select name="borrow" className="ui fluid dropdown" style={inputStyle3Collums} onChange={this.handleChange.bind(this)} value={this.state.borrow}>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
                         </select>
                     </div>
-                        <Form.Button>Submit</Form.Button>
-                    </Form>
                 </div>
+                <Button style={{margin: "25px 0px 0px 0px", width: "100%", height: "46px"}} onClick={() => {this.handleSubmit()}}>Submit</Button>
+                {   this.state.uploadSuccess ?
+                    <div className="ui success message">
+                        <div class="header">Submit Completed</div>
+                        <p>Click on any input to clear the data.</p>
+                    </div> : null
+                }
             </div>
         )
     }
+}
 
+const musicGenres = [
+    "Select the genre", "Alternative", "Bossa Nova", "Blues", "Classical", "Country", "Dance", "Death Metal", "Doom Metal", "Drum & Bass", "Electronic", "Folk", "Trance", "Gospel", "Grunge", "Hard Rock", "Hardcore", "Hip-Hop", "Indie Rock", "Jazz", "Metal", "New Wave", "Progressive Rock",  "House", "Lounge", "Orchestral", "Opera", "Pop", "Pop Punk", "Pop/Rock", "Punk", "R&B/Soul", "Rap", "Reggae", "Rock & Roll", "Soul", "Techno" ]
+
+const inputStyle = {
+    padding:" 0.67861429em 1em",
+    fontSize: "1em",
+    background: "#fafafa",
+    border: "1px solid #cccccc",
+    color: "rgba(0, 0, 0, 0.87)",
+    borderRadius: "3px",
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.075) inset",
+    transition: "color 0.1s ease, border-color 0.1s ease",
+    width: "100%"
+}
+
+const inputStyle3Collums = {
+    display: "flex",
+    padding:" 0.67861429em 1em",
+    fontSize: "1em",
+    background: "#fafafa",
+    border: "1px solid #cccccc",
+    color: "rgba(0, 0, 0, 0.87)",
+    borderRadius: "3px",
+    boxShadow: "0 1px 2px rgba(0, 0, 0, 0.075) inset",
+    transition: "color 0.1s ease, border-color 0.1s ease",
+    width: "100%"
 }

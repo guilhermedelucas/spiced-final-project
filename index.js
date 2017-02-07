@@ -1,77 +1,52 @@
 const express = require('express');
 const app = express();
-var MongoClient = require('mongodb').MongoClient
-var assert = require('assert');
-var userData = require('./jsonsample2.json');
-var url = 'mongodb://localhost:27017/finalapp';
-console.log(userData);
+const insertDataRouter = require('./routes/insertroutes')
+const getDataRouter = require('./routes/getdataroutes');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+const request = require('request');
 
+
+//Setting the webpack
 if (process.env.NODE_ENV != 'production') {
     app.use(require('./webpack.config.js'));
 }
+
+app.use(bodyParser.urlencoded({
+    limit: '5mb', extended: false }));
+
+app.use(bodyParser.json({
+    limit: '5mb' }));
+
+app.use(express.static('uploads'));
+
+app.use(express.static(__dirname + '/public'));
 
 app.use(function(req, res, next){
     console.log(req.method);
     console.log(req.url);
     next();
-})
-
-
-app.use(express.static(__dirname + '/public'));
-
-app.get('/getnavbar', function(req, res){
-    MongoClient.connect(url, function(err, db) {
-        assert.equal(null, err);
-        console.log("Coneected successfully to server");
-        db.collection('finalapp')
-        .aggregate([
-             { $match: { username: "guilhermedelucas" } },
-             { $unwind: "$items"},
-             { $group: { _id : '$items.collection', genre: { $addToSet: '$items.genre'}, platform: {$addToSet: '$items.platform'}, media: {$addToSet:'$items.media'}}},
-             { $sort: {_id: 1}}
-            ]).toArray(function(err, result){
-            if (err) {
-                console.log(err);
-            } else if (result.length){
-                res.json({
-                    navbar: result
-                })
-            } else {
-                res.send('no documen found');
-            }
-        })
-    })
-})
-
-app.get('/test', function(req, res){
-    MongoClient.connect(url, function(err, db) {
-      assert.equal(null, err);
-      console.log("Connected successfully to server");
-      db.collection('finalapp').aggregate([
-                     { $match: { username: "guilhermedelucas" } },
-                     { $unwind: "$items"},
-                     { $match: { 'items.collection': "Music" } },
-                     { $group: { _id : '$items.collection', genre: { $addToSet: '$items.genre'}, items: { $push : '$items'} } },
-                 ]).toArray(function(err, result) {
-                     if (err) {
-                         console.log(err);
-                     } else {
-                         console.log(result);
-                     }
-                 });
-      db.close();
-    });
-    res.json({
-        userData
-    });
 });
 
-app.get('*', function(req, res){
-    res.redirect('/')
+app.use('/insertdata', insertDataRouter);
+app.use('/getdata', getDataRouter);
+
+// Routes Get
+app.get('*', (req, res) => {
+    res.redirect('/') ;
 });
 
 
+setInterval(function() {
+    request('https://source.unsplash.com/random/1440x900', {
+        encoding: 'binary'
+    }, function(req, res, body) {
+        fs.writeFile('./public/imgs/background.jpg', body, 'binary', function(err) {
+            console.log(err);
+        });
+    });
+}, 1000000);
 
-app.listen(8080, function() {
+app.listen(8080, () => {
     console.log("I'm listening.")
 });

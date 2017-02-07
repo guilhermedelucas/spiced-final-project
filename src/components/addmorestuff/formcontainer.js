@@ -3,7 +3,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Checkbox, Form, Input, Message, Radio, Select, TextArea } from 'semantic-ui-react';
 
-
 const collection = [
   { key: 'Books', text: 'Books', value: 'Books' },
   { key: 'Games', text: 'Games', value: 'Games' },

@@ -4,14 +4,32 @@ import ReactDOM from 'react-dom';
 var Router = require('react-router');
 import { Button, Checkbox, Form, Input, Message, Radio, Select, TextArea } from 'semantic-ui-react';
 
-export default class BookForm extends React.Component {
+export default class DisplayItem extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            file: '',
-            imagePreviewUrl: '',
-            uploadSuccess: false
         };
+    }
+
+    componentDidMount() {
+        console.log("will mount");
+        axios.get('/getdata/singleitem/' + this.props.query).then((response) => {
+            this.setState({
+                name: response.data.itemData[0].item.name,
+                genre: response.data.itemData[0].item.genre,
+                publisher: response.data.itemData[0].item.publisher,
+                artist: response.data.itemData[0].item.artist,
+                media: response.data.itemData[0].item.media,
+                platform: response.data.itemData[0].item.platform,
+                developer: response.data.itemData[0].item.developer,
+                pages: response.data.itemData[0].item.pages,
+                author: response.data.itemData[0].item.author,
+                borrow: response.data.itemData[0].item.borrow,
+                imagePreviewUrl: response.data.itemData[0].item.imgUrl,
+                collection: response.data.itemData[0].item.collection
+                })
+                console.log(this.state);
+            })
     }
 
     handleCollection(e) {
@@ -43,45 +61,44 @@ export default class BookForm extends React.Component {
     }
 
     handleSubmit(){
-        let { name, genre, publisher, pages, author, file, borrow} = this.state
-        var formData = new FormData();
-        formData.append('file', file);
-        axios.post('/insertdata/saveimage', formData, {
-            headers: {
-                'Content-Type': false
-            }
-        }).then((response) => {
-            console.log(response);
-            if (response.data.success) {
-                axios.post('/insertdata/addbook', {name, genre, publisher, pages, author, imgUrl: response.data.file, collection: this.props.query, borrow}).
-                then((response) => {
-                    if (response.data.success) {
-                        this.setState({
-                            uploadSuccess: true
-                        })
-                        setTimeout(() => {Router.browserHistory.push('/results?collection=Books')}, 1000);
-
-                    }
-                    console.log("worked");
-                })
-            } else {
-                console.log("didin't worked");
-            }
-        });
+        // console.log(this.props);
+        // let { name, genre, publisher, pages, author, file, borrow} = this.state
+        // var formData = new FormData();
+        // formData.append('file', file);
+        // axios.post('/insertdata/saveimage', formData, {
+        //     headers: {
+        //         'Content-Type': false
+        //     }
+        // }).then((response) => {
+        //     console.log(response);
+        //     if (response.data.success) {
+        //         axios.post('/insertdata/addbook', {name, genre, publisher, pages, author, imgUrl: response.data.file, collection: this.props.query, borrow}).
+        //         then((response) => {
+        //             if (response.data.success) {
+        //                 this.setState({
+        //                     uploadSuccess: true
+        //                 })
+        //                 setTimeout(() => {Router.browserHistory.push('/results?collection=Books')}, 1000);
+        //             }
+        //             console.log("worked");
+        //         })
+        //     } else {
+        //         console.log("didin't worked");
+        //     }
+        // });
     }
 
     render() {
-        let { imagePreviewUrl } = this.state;
         let $imagePreview = null;
-        if (imagePreviewUrl) {
-            $imagePreview = (<img src={imagePreviewUrl} style={{borderRadius: "15px", width: "100%"}}/>);
+        if (this.state.imagePreviewUrl) {
+            $imagePreview = (<img src={this.state.imagePreviewUrl} style={{borderRadius: "15px", width: "100%"}}/>);
         } else {
             $imagePreview = (<div className="previewText" style={{color: "rgb(102, 102, 102)", fontWeigth: "bold"}}>Please select an Image for Preview</div>);
         }
         return (
-            <div className="ui raised very padded text container segment" style={{marginTop: "50px"}}>
-            <h2>{this.props.title}</h2>
-                <h4>Title</h4>
+            <div style={content}>
+                <div className="ui raised very padded text container segment" style={{marginTop: "50px"}}>
+                <h2>{this.state.name}</h2>
                 <input label='Title' onChange={this.handleChange.bind(this)} style={inputStyle} name='name' placeholder='Insert the title' value={this.state.name}/>
                 <div className="imgPreview" style={{width: "100%", paddingTop: "35px"}}>
                     {$imagePreview}
@@ -120,7 +137,9 @@ export default class BookForm extends React.Component {
                         <p>Click on any input to clear the data.</p>
                     </div> : null
                 }
+                </div>
             </div>
+
         )
     }
 }
@@ -151,4 +170,8 @@ const inputStyle3Collums = {
     boxShadow: "0 1px 2px rgba(0, 0, 0, 0.075) inset",
     transition: "color 0.1s ease, border-color 0.1s ease",
     width: "100%"
+}
+
+const content = {
+    height: "100vh",  width: "100vw", position: "relative", backgroundImage:"url(../../imgs/background.jpg)", backgroundSize: "cover", overflow: "auto", zIndex: "1", boxShadow: "0px 5px 24px 0px rgba(0,0,0,0.1)"
 }

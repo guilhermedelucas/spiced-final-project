@@ -1,29 +1,18 @@
 import axios from 'axios';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import DisplayList from './displaylist';
 import SideBar from '../sidebar/sidebaritems'
 import TopBar from '../topbar/topbar'
+import DisplayItem from './singledisplay'
 import { Container } from 'semantic-ui-react'
 
 
-export default class MainPageView extends React.Component {
+export default class SingleItemDisplay extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userData: [],
-            query: this.props.location.query,
-            view: "grid"
+            itemData: [],
         };
-        this.onChildChanged = this.onChildChanged.bind(this);
-    }
-
-    componentWillMount() {
-    axios.get('/getdata/userdata').then((response) => {
-        this.setState({
-            userData: response.data.userData[0]
-        })
-    });
     }
 
     onChildChanged(newState){
@@ -33,11 +22,12 @@ export default class MainPageView extends React.Component {
     }
 
     render() {
+        console.log(this.props);
         return (
             <div style={{display: "table", margin: "auto", display: "absolute", width:"100vw", heigth: "100vh"}}>
                 <TopBar callbackParent={this.onChildChanged} view={this.state.view}/>
                 <SideBar query={this.props.location.query}/>
-                <DisplayList userData={this.state.userData} query={this.props.params.query} view={this.state.view}/>
+                <DisplayItem query={this.props.routeParams.query}/>
             </div>
         )
     }
