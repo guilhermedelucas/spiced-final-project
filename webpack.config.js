@@ -13,11 +13,13 @@ const plugins = [
 ];
 
 if (process.env.NODE_ENV == 'production') {
+    console.log("production");
     plugins.push(new webpack.optimize.UglifyJsPlugin({
        compress: {
            warnings: false
        }
     }));
+} else {
 }
 
 const conf = {
@@ -28,14 +30,10 @@ const conf = {
     },
     plugins: plugins,
     module: {
-        loaders: [{
-            test:  /\.js$/,
-            exclude: /node_modules/,
-            loader: 'babel-loader',
-            query: {
-                presets: [['es2015'], ['react']]
-            }
-        }]
+        loaders: [
+            { test:  /\.js$/, exclude: /node_modules/, loader: 'babel-loader', query: { presets: [['es2015'], ['react']] }},
+            { test: /\.css$/, loader: "style-loader!css-loader" }
+        ]
     }
 };
 
@@ -53,6 +51,7 @@ if (require.main == module) {
         watchOptions: {
             aggregateTimeout: 300
         },
+        noInfo: true,
         publicPath: '/'
     });
 }

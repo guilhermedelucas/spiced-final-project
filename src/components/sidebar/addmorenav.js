@@ -25,16 +25,15 @@ export default class AddMoreNav extends React.Component {
     render () {
 
         return (
-
                 <li onClick={() => this.clickHandler()} style={{padding: "10px 10px 10px 20px", listStyle: "none", cursor: "pointer"}}>ADD MORE STUFF
                 { this.state.showItems ? <i className="caret up icon"></i> : <i className="caret down icon"></i> }
                     { this.state.showItems ? (
                     <div>
                         <div>
-                            <Link to="/addmorestuff/Books"><h5 style={liStyle}><i className="add circle icon"></i> Add a book</h5></Link>
-                            <Link to="/addmorestuff/Games"><h5 style={liStyle}><i className="add circle icon"></i> Add a games</h5></Link>
-                            <Link to="/addmorestuff/Movies"><h5 style={liStyle}><i className="add circle icon"></i> Add a movie</h5></Link>
-                            <Link to="/addmorestuff/Music"><h5 style={liStyle}><i className="add circle icon"></i> Add an album</h5></Link>
+                            <Link to="/additem/Books"><h5 style={liStyle}><i className="add circle icon"></i> Add a book</h5></Link>
+                            <Link to="/additem/Games"><h5 style={liStyle}><i className="add circle icon"></i> Add a games</h5></Link>
+                            <Link to="/additem/Movies"><h5 style={liStyle}><i className="add circle icon"></i> Add a movie</h5></Link>
+                            <Link to="/additem/Music"><h5 style={liStyle}><i className="add circle icon"></i> Add an album</h5></Link>
                         </div>
                     </div>
                     ) : null

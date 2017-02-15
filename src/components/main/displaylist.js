@@ -32,7 +32,7 @@ export default class DisplayList extends React.Component {
                         </Item>)
                     } else {
                 var list = (
-                    <div className="ui raised very padded container segment" style={{marginTop: "50px", maxWidth:"1000px!important"}}>
+                    <div className="ui raised very padded container segment" style={{marginTop: "50px", maxWidth:"1000px!important", overflow: "auto"}}>
 
                             <h1>{query.collection.toUpperCase()}</h1>
                             <List child={groupByCollection} view={this.props.view}/>
@@ -234,7 +234,7 @@ export default class DisplayList extends React.Component {
 
     return(
             <div style={content}>
-                <div style={{position: "relative", width: "90%"}}>
+                <div style={{position: "relative"}}>
                     <div>
                         { this.props.view == "grid" ? (
                                 <div className="ui raised very padded text container segment" style={{marginTop: "50px"}}>

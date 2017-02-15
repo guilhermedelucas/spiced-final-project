@@ -3,7 +3,7 @@ import queryString from 'query-string';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Item, Divider, Label } from 'semantic-ui-react';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import AddMoreNavBar  from '../sidebar/addmorenav'
 
 
@@ -15,15 +15,19 @@ export default class SideBarItems extends React.Component {
             nestedView: this.props.nestedView,
             menuOpen: true,
             leftPosition: 0
-
         }
     }
 
     componentDidMount() {
         axios.get('/getdata/navbar').then((response) => {
-            this.setState({
-                navbar: response.data.navbar,
-            })
+            console.log(response.data.loggedIn);
+            if (response.data.loggedIn) {
+                this.setState({
+                    navbar: response.data.navbar,
+                })
+            } else {
+                browserHistory.push('/');
+            }
         });
     }
 
@@ -74,6 +78,17 @@ export default class SideBarItems extends React.Component {
                 menuOpen: true
             })
         }
+    }
+
+    logOut(){
+        axios.get('/getdata/logout').then((response) => {
+            if (response.data.loggedOut) {
+                browserHistory.push('/');
+            } else {
+                console.log("hello");
+            }
+
+        });
     }
 
     render() {
@@ -134,6 +149,10 @@ export default class SideBarItems extends React.Component {
                         <img src="../imgs/caniborrowlogo.png" width="200px" style={{padding: "10px 10px 10px 20px", marginTop: "15px", marginLeft: '10px'}}/>
                     </li>
                     <Divider style={{margin: "5px 0px"}}/>
+                    <Link to="/profile">
+                        <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>PROFILE</li>
+                    </Link>
+                    <Divider style={{margin: "5px 0px"}}/>
                     <AddMoreNavBar/>
                     <Divider style={{margin: "5px 0px"}}/>
                     <Link to="/home">
@@ -141,6 +160,7 @@ export default class SideBarItems extends React.Component {
                     </Link>
                     <Divider style={{margin: "5px 0px"}}/>
                     {list}
+                    <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white", cursor: "pointer"}} onClick={() => {this.logOut()}}><img src="../imgs/icons/logout.png" height="15px" /> LOG OUT</li>
                 </div>
                 </div>
         )

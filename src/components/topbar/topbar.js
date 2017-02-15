@@ -3,6 +3,8 @@ import queryString from 'query-string';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Card, Divider, Icon, Image, Item  } from 'semantic-ui-react';
+import { browserHistory, Link } from 'react-router';
+
 
 
 export default class Topbar extends React.Component {
@@ -10,6 +12,7 @@ export default class Topbar extends React.Component {
         super(props);
         this.state = {
             view: this.props.view,
+            value: ""
         }
     }
 
@@ -26,37 +29,39 @@ export default class Topbar extends React.Component {
         }
     }
 
+    logOut(){
+        axios.get('/getdata/logout').then((response) => {
+            if (response.data.loggedOut) {
+                browserHistory.push('/');
+            } else {
+                console.log("hello");
+            }
+
+        });
+    }
+
     render() {
         return (
         <div>
             <div className="ui pointing menu">
-
-              <div className="right menu">
-                  <a className="item active">
-                    Home
-                  </a>
-                  <a className="item">
-                    Messages
-                  </a>
-                  <a className="item">
-                    Friends
-                  </a>
-                  <a className="item">
-                    { (this.state.view == "grid") ? (<i className="grid layout icon" onClick={() => this.changeView()}></i>) : (<i className="list layout icon" onClick={() => this.changeView()}></i>) }
-                  </a>
-                <div className="item">
-                  <div className="ui transparent icon input">
-                    <input type="text" placeholder="Search..."/>
-                    <i className="search link icon"></i>
-                  </div>
+                <div className="right menu">
+                    <a className="item active">
+                        Home
+                    </a>
+                    <a className="item">
+                        { (this.state.view == "grid") ? (<i className="grid layout icon" title="Grid View" onClick={() => this.changeView()}></i>) : (<i className="list layout icon" title="List View" onClick={() => this.changeView()}></i>) }
+                    </a>
+                    <a className="item" onClick={() => {this.logOut()}}  title="Log out">
+                        <i className="power icon" alt="LogOut"></i>
+                    </a>
+                    <a className="item" style={{paddingRight: "30px"}}>
+                        <Link to="/search">
+                            <i className="search link icon"></i>
+                        </Link>
+                    </a>
                 </div>
-              </div>
             </div>
-            </div>
+        </div>
         )
     }
 }
-
-// <div className="ui segment">
-//     <p></p>
-// </div>

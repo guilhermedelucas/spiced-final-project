@@ -1,11 +1,20 @@
 const express = require('express');
 const app = express();
-const insertDataRouter = require('./routes/insertroutes')
+const insertDataRouter = require('./routes/insertroutes');
+const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const getDataRouter = require('./routes/getdataroutes');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const request = require('request');
 
+
+app.use(cookieParser());
+app.use(cookieSession({
+    secret: process.env.SESSION_SECRET || 'Moalways late to Spiced Academy',
+    //add this secret to vars on heroku;
+    maxAge: 1000 * 60 * 60 * 24 * 14
+}));
 
 //Setting the webpack
 if (process.env.NODE_ENV != 'production') {
@@ -33,9 +42,8 @@ app.use('/getdata', getDataRouter);
 
 // Routes Get
 app.get('*', (req, res) => {
-    res.redirect('/') ;
+    res.sendFile(__dirname + '/public/index.html');
 });
-
 
 setInterval(function() {
     request('https://source.unsplash.com/random/1440x900', {

@@ -59,7 +59,7 @@ export default class BookForm extends React.Component {
                         this.setState({
                             uploadSuccess: true
                         })
-                        setTimeout(() => {Router.browserHistory.push('/results?collection=Books')}, 1000);
+                        setTimeout(() => { Router.browserHistory.push('/results/collection=Books') }, 1000);
 
                     }
                     console.log("worked");
@@ -79,7 +79,7 @@ export default class BookForm extends React.Component {
             $imagePreview = (<div className="previewText" style={{color: "rgb(102, 102, 102)", fontWeigth: "bold"}}>Please select an Image for Preview</div>);
         }
         return (
-            <div className="ui raised very padded text container segment" style={{marginTop: "50px"}}>
+            <div className="ui raised very padded text container segment" style={{marginTop: "50px", overflow: "auto"}}>
             <h2>{this.props.title}</h2>
                 <h4>Title</h4>
                 <input label='Title' onChange={this.handleChange.bind(this)} style={inputStyle} name='name' placeholder='Insert the title' value={this.state.name}/>
