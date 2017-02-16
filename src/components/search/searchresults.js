@@ -19,7 +19,7 @@ export default class  SearchResult extends React.Component {
     addFriend(username) {
         var that = this;
 
-        axios.post('/insertdata/addfriend/', {username})
+        axios.post('/insertdata/addfriend/', {username, picture})
         .then(function (response) {
             // console.log(response.data.searchData);
             // that.setState({
@@ -73,28 +73,23 @@ export default class  SearchResult extends React.Component {
             })
         })
 
+        _.map(filterSearchResult, (item) => {
+        console.log(_.some(friendsList, (element) => {
+            console.log(element, item.username);
+            return item.username == element })
+            );
+        })
+
         console.log(friendsList);
 
         var displayResults = _.map(filterSearchResult, (item) => {
             return (
                 <List.Item>
 
-                    { friendsList.length == 0 ?
-                        <List.Content floated='right'>
-                                    <Button onClick={() => this.addFriend(item.username)}>Add</Button>
-                        </List.Content> :
-                     _.filter(friendsList, (element) => {
-                         console.log("hello");
-                        if (item.username === element) {
-                            return null
-                        } else {
-                            console.log("fuckme");
-                    return (
-                            <List.Content floated='right'>
-                                <Button onClick={() => this.addFriend(item.username)}>Add</Button>
-                            </List.Content>)
-                        }
-                    })
+                    { _.some(friendsList, (element) => {
+                        return item.username == element }) ? null : (<List.Content floated='right'>
+                            <Button onClick={() => this.addFriend(item.username, item.picture)}>Add</Button>
+                        </List.Content>)
                     }
                     <Image avatar src={item.picture} />
                     <List.Content>

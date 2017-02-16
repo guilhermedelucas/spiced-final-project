@@ -20,7 +20,6 @@ export default class SideBarItems extends React.Component {
 
     componentDidMount() {
         axios.get('/getdata/navbar').then((response) => {
-            console.log(response.data.loggedIn);
             if (response.data.loggedIn) {
                 this.setState({
                     navbar: response.data.navbar,
@@ -87,7 +86,6 @@ export default class SideBarItems extends React.Component {
             } else {
                 console.log("hello");
             }
-
         });
     }
 
@@ -159,6 +157,10 @@ export default class SideBarItems extends React.Component {
                         <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>ALL MY STUFF</li>
                     </Link>
                     <Divider style={{margin: "5px 0px"}}/>
+                    <Link to="/friends">
+                        <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>FRIENDS</li>
+                    </Link>
+                        <Divider style={{margin: "5px 0px"}}/>
                     {list}
                     <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white", cursor: "pointer"}} onClick={() => {this.logOut()}}><img src="../imgs/icons/logout.png" height="15px" /> LOG OUT</li>
                 </div>

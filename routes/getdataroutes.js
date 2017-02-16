@@ -23,7 +23,7 @@ router.get('/navbar', function(req, res) {
         MongoClient.connect(url, function(err, db){
             assert.equal(null, err);
             console.log("Conected successfully to server");
-            db.collection('finalapp')
+            db.collection('userData')
             .aggregate([
                  { $match: { username: req.session.username } },
                  { $unwind: "$items"},
@@ -51,7 +51,7 @@ router.get('/userdata', function(req, res) {
     if (req.session.username) {
         MongoClient.connect(url, function (err, db) {
             assert.equal(null, err);
-            db.collection('finalapp').find({username: req.session.username}).toArray(function(err, result){
+            db.collection('userData').find({username: req.session.username}).toArray(function(err, result){
                 if (err) {
                     console.log(err)
                 } else if (result.length){
@@ -71,11 +71,44 @@ router.get('/userdata', function(req, res) {
     }
 })
 
+router.get('/friendslist', function(req, res){
+    const currentUser = req.session.username
+    MongoClient.connect(url, function(err, db){
+        assert.equal(null, err);
+        db.collection('friendships').find({ username_one: currentUser, currentStatus: "pending"}).toArray(function (err, result){
+            if (err) {
+                console.log(err);
+            } else {
+                const waitingList = result;
+                    db.collection('friendships').find({ username_two: currentUser, currentStatus: "pending" }).toArray(function(err, result){
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            const replyList = result
+                            db.collection('friendships').find({ $or:[{ username_one: currentUser}, {username_two: currentUser}], $and: [{ currentStatus: "yes"}]
+                            }).toArray(function(err, result){
+                                if(err) {
+                                    console.log(err);
+                                } else {
+                                    const friendsList = result
+                                    res.json({
+                                        waitingList, replyList, friendsList, currentUser
+                                    })
+                                }
+                            })
+                        }
+                    })
+                }
+            })
+        })
+})
+
+
 router.get('/singleitem/:id', function(req, res){
     var itemId = req.params.id;
     MongoClient.connect(url, function (err, db){
         assert.equal(null, err);
-        db.collection('finalapp')
+        db.collection('userData')
         .aggregate([
             { $match: { username: "guilhermedelucas" } },
             { $unwind: "$items"},
@@ -85,6 +118,7 @@ router.get('/singleitem/:id', function(req, res){
             if (err) {
                 console.log(err)
             } else if (result.length){
+                console.log(result);
                 res.json({
                     itemData: result
                 })
@@ -130,9 +164,9 @@ router.get('/search/:id', function(req, res){
         console.log(query);
         MongoClient.connect(url, function(err, db){
             assert.equal(null, err);
-            db.collection('finalapp').find(query).toArray(function(err, result){
+            db.collection('userData').find(query).toArray(function(err, result){
                 const searchData = result;
-                db.collection('finalapp').find({username: currentUser}).toArray(function(err, result){
+                db.collection('userData').find({username: currentUser}).toArray(function(err, result){
                     const currentUserData = result;
                     res.json({
                         searchData,
@@ -148,7 +182,7 @@ router.get('/search/:id', function(req, res){
     //     console.log(query);
     //     MongoClient.connect(url, function(err, db){
     //         assert.equal(null, err);
-    //         db.collection('finalapp').find(query).toArray(function(err, result){
+    //         db.collection('userData').find(query).toArray(function(err, result){
     //             res.json({
     //                 searchData: result
     //             })
@@ -162,7 +196,9 @@ router.get('/search/:id', function(req, res){
 router.post('/login', function(req, res){
     MongoClient.connect(url, function(err, db){
         assert.equal(null, err);
-        db.collection('finalapp').find({email: req.body.email}).toArray(function(err, result){
+        console.log(req.body.email);
+        db.collection('userData').find({email: req.body.email}).toArray(function(err, result){
+            console.log(result);
             if (err || result.length == 0){
                 console.log(err);
                 res.json({
@@ -182,7 +218,6 @@ router.post('/login', function(req, res){
                             incorrectPassword: true
                         })
                     }
-                    console.log(data);
                 }).catch(function(err){
                     console.log(err);
                 })

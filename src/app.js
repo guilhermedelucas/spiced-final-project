@@ -10,6 +10,7 @@ import Register from './components/register/registermain';
 import SingleItemDisplay from './components/singleitemdisplay/singlemain';
 import Home from './components/home/home';
 import SearchPage from './components/search/searchview';
+import FriendsPage from './components/friends/friendsview'
 
 
 
@@ -23,5 +24,6 @@ ReactDOM.render(
             <Route name="search" path="search(/:query)" component={SearchPage}/>
             <Route name="sgit" path="sgit/:query" component={SingleItemDisplay}/>
             <Route name="welcome" path="/" component={Home}/>
+            <Route name="friends" path="/friends" component={FriendsPage}/>
         </Router>,
     document.getElementById('main'));

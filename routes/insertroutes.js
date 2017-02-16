@@ -64,7 +64,7 @@ router.post('/addbook', function(req, res)  {
     var imgUrl = "../uploads/" + req.body.imgUrl
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp')
+        db.collection('userData')
         .update({username: req.session.username},
             {$push: { items:
                 {   _id: new ObjectID(),
@@ -95,7 +95,7 @@ router.post('/addgame', function(req, res) {
     var imgUrl = "../uploads/" + req.body.imgUrl
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp')
+        db.collection('userData')
         .update({username: req.session.username},
             {$push: { items:
                 {   _id: new ObjectID(),
@@ -126,7 +126,7 @@ router.post('/addmovie', function(req, res) {
     var imgUrl = "../uploads/" + req.body.imgUrl
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp')
+        db.collection('userData')
         .update({username: req.session.username},
             {$push: { items:
                 {   _id: new ObjectID(),
@@ -157,19 +157,26 @@ router.post('/addmusic', function(req, res) {
     var imgUrl = "../uploads/" + req.body.imgUrl
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp')
-        .update({username: req.session.username},
-            {$push: { items:
-                {   _id: new ObjectID(),
-                    collection: req.body.collection,
-                    name: req.body.name,
-                    genre: req.body.genre,
-                    artist: req.body.artist,
-                    media: req.body.media,
-                    borrow: req.body.borrow,
-                    imgUrl: imgUrl,
-                    dateadded: new Date()
-            }}}, function(err) {
+        db.collection('userData')
+        .update(
+            {
+                username: req.session.username},
+                {
+                    $push: { items:
+                    {
+                        _id: new ObjectID(),
+                        collection: req.body.collection,
+                        name: req.body.name,
+                        genre: req.body.genre,
+                        artist: req.body.artist,
+                        media: req.body.media,
+                        borrow: req.body.borrow,
+                        imgUrl: imgUrl,
+                        dateadded: new Date()
+                    }
+                }
+            },
+            function(err) {
                 if (err) {
                     res.json({
                         success: false
@@ -185,55 +192,53 @@ router.post('/addmusic', function(req, res) {
 
 router.post('/addfriend', function(req, res){
     var usernameToAdd = req.body.username;
+    var pictureToAdd = req.body.picture;
     var currentUser = req.session.username;
-
-
-    console.log(usernameToAdd, currentUser);
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp').update({username: currentUser}, {$push: { friends: {
-            username: usernameToAdd,
-            currentStatus: "pending",
-            dateadded: new Date()
-        }}}, function (err) {
-            if (err){
-                res.json({
-                    success: false
-                })
-            } else {
-                db.collection('finalapp').update({username: usernameToAdd}, {$push: { friends: {
-                    username: currentUser,
+        db.collection('userData').find({username: currentUser}, {picture: 1}).toArray(function(err, results){
+            console.log(results);
+            const currentUserPicture = results[0].picture;
+            console.log(currentUserPicture);
+            db.collection('friendships').insert(
+                {
+                    username_one: currentUser,
+                    username_two: usernameToAdd,
+                    username_one_picture: pictureToAdd,
+                    username_two_picture: currentUserPicture,
                     currentStatus: "pending",
                     dateadded: new Date()
-                }}}, function (err){
+                },
+                function (err) {
                     if (err){
                         res.json({
-                            sucess: false
+                            success: false
                         })
                     } else {
                         res.json({
                             sucess: true
                         })
                     }
-                })
-            }
+                }
+            )
         })
     })
 })
+
 
 router.post('/registeruser', function(req, res){
     const { username, email, password } = req.body;
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp').find({username: username}, {limit: 1})
+        db.collection('userData').find({username: username}, {limit: 1})
         .toArray(function(err, results) {
             if (results.length == 0) {
-                db.collection('finalapp').find({email: email}, {limit: 1})
+                db.collection('userData').find({email: email}, {limit: 1})
                 .toArray(function(err, results) {
                     if (results.length == 0) {
                         hashPassword(password).then(function(hash){
                         // console.log("email and username are unique");
-                            db.collection('finalapp').insert({
+                            db.collection('userData').insert({
                                 username,
                                 email,
                                 password: hash
@@ -274,7 +279,7 @@ router.post('/updateprofile', function(req, res){
     const { firstName, lastName, birthday, job, city, country, phone, picture } = req.body;
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
-        db.collection('finalapp').update({username: username}, {$set: { firstName, lastName, birthday, job, city, country, phone, picture }},
+        db.collection('userData').update({username: username}, {$set: { firstName, lastName, birthday, job, city, country, phone, picture }},
             function(err){
                 if(err){
                     console.log(err);
@@ -288,6 +293,27 @@ router.post('/updateprofile', function(req, res){
                     })
                 }
             })
+    })
+})
+
+router.post('/acceptfriend', function(req, res){
+    const { usernameToAccept } = req.body;
+    const currentUsername = req.session.username;
+    console.log(req.session.username);
+    MongoClient.connect(url, (err, db) => {
+        assert.equal(null, err);
+        db.collection('friendships').update(
+            { username_one: usernameToAccept, username_two:currentUsername}, { $set: { currentStatus: "yes" }}, function(err){
+            if (err){
+                res.json({
+                    success: false
+                })
+            } else {
+                res.json({
+                    success: true
+                })
+            }
+        })
     })
 })
 
