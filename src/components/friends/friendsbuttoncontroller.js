@@ -14,24 +14,34 @@ export default class  ButtonFriendsController extends React.Component {
 
 
     acceptFriend(usernameToAccept){
+        var that = this;
         axios.post('/insertdata/acceptfriend/', { usernameToAccept })
         .then(function (response) {
-            console.log(response.data);
-            // that.setState({
-            //     searchResult: response.data.searchData
-            // });
+            if (response.data.success) {
+             that.props.callbackParent();
+            } else {
+             console.log(error);
+            }
         })
         .catch(function (error) {
             console.log(error);
         });
-
-
-
     }
 
     removeFriend(usernameToRemove){
-
-
+        var that = this;
+        axios.post('/insertdata/removefriend/', { usernameToRemove })
+        .then(function (response) {
+            console.log(response.data);
+            if (response.data.success) {
+                that.props.callbackParent();
+            } else {
+                console.log(error);
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     }
 
     render() {

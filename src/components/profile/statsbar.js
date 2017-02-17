@@ -17,7 +17,7 @@ export default class StatsBar extends React.Component {
                 <Link to="home"><p style={{lineHeight: "1em"}}>Items  <span style={label}>{itemsTotal || 0}</span></p></Link>
                 </a>
                 <a className="item" style={{backgroundColor: "rgba(0, 0, 0, 0.0470588)"}}>
-                <Link to="friendlist"><p style={{lineHeight: "1em"}}>Friends  <span style={label}>{friendsTotal || 0}</span></p></Link>
+                <Link to="friends"><p style={{lineHeight: "1em"}}>Friends  <span style={label}>{friendsTotal || 0}</span></p></Link>
                 </a>
                 <a className="item" style={{backgroundColor: "rgba(0, 0, 0, 0.0470588)"}}>
                 <p style={{lineHeight: "1em"}}>Borrowed  <span style={label}>{borrowedTotal || 0}</span></p>

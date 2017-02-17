@@ -10,49 +10,19 @@ export default class  FriendsResults extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: null, request: false, renderList: [], friendsList: [], waitingList: [], replyList: [], view: "friends"
+            index: 0, currentUser: null, request: false, renderList: [], friendsList: [], waitingList: [], replyList: [], view: "friends"
         };
     }
 
 
     changeStatus(username) {
         var that = this;
-
         axios.post('/insertdata/frienstatus/', {username})
         .then(function (response) {
-            // console.log(response.data.searchData);
-            // that.setState({
-            //     searchResult: response.data.searchData
-            // });
         })
         .catch(function (error) {
             console.log(error);
         });
-
-
-        // axios.post('/insertdata/addfriend', {
-        //     username
-        // })
-        // .then(function (response) {
-        //     console.log("hello");
-        //     if (response.data.sucess) {
-        //         that.setState({
-        //             usernameExists: false,
-        //             emailExists: false
-        //         })
-        //        browserHistory.push('/profile');
-        //     }  else if (response.data.username == false){
-        //        console.log("username");
-        //        that.setState({
-        //            usernameExists: true
-        //        })
-        //    } else if (response.data.email == false){
-        //        console.log("email");
-        //        that.setState({
-        //            emailExists: true,
-        //            usernameExists: false
-        //        })
-        // })
     }
 
     componentDidMount(){
@@ -69,7 +39,6 @@ export default class  FriendsResults extends React.Component {
         .catch(function (error) {
             console.log(error);
         });
-
     }
 
     onChangeView(view) {
@@ -81,50 +50,68 @@ export default class  FriendsResults extends React.Component {
         } else if (view == "pending") {
             this.setState({
                 view,
-                renderList: this.state.waitingList
+                renderList: this.state.replyList
             })
-        } else {
+        } else if (view == "sent"){
             this.setState({
                 view,
-                renderList: this.state.replyList
+                renderList: this.state.waitingList
             })
         }
     }
 
+    updateFriendList(username){
+        var that = this;
+        axios.get('/getdata/friendslist/').then(function (response) {
+            that.setState({
+                friendsList: response.data.friendsList,
+                waitingList: response.data.waitingList,
+                replyList: response.data.replyList,
+                currentUser: response.data.currentUser,
+                renderList: response.data.friendsList
+            });
+            that.onChangeView();
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+    }
+
+    paginateControl(controller) {
+        const { index } = this.state;
+        controller == "more" ? this.setState({
+            index: (index + 15)
+        }) : this.setState({
+            index: (index - 15)
+        })
+        console.log(this.state.index);
+    }
+
     render() {
-        const { friendsList, waitingList, replyList, currentUser, view} = this.state;
-
+        const { friendsList, waitingList, replyList, currentUser, view, index } = this.state;
         var arraryOfResults = [];
-        console.log(friendsList, waitingList, replyList, currentUser);
-
         _.map(this.state.renderList, (item) => {
-            if(item.username_one != currentUser) {
-                console.log("one");
-                arraryOfResults.push({username: item.username_one, picture: item.username_one_picture, currentStatus: item.currentStatus})
-            } else if(item.username_two != currentUser)  {
-                console.log("two");
-                console.log(item.username_two_picture);
-                arraryOfResults.push({username: item.username_two, picture: item.username_two_picture, currentStatus: item.currentStatus})
+            if (item.currentStatus == "no") {
+                return
+            } else {
+                if(item.username_one != currentUser) {
+                    arraryOfResults.push({username: item.username_one, picture: item.username_one_picture, currentStatus: item.currentStatus})
+                } else if(item.username_two != currentUser)  {
+                    arraryOfResults.push({username: item.username_two, picture: item.username_two_picture, currentStatus: item.currentStatus})
+                }
             }
         })
-
-        console.log(arraryOfResults);
-
-        var displayFriends = _.map(arraryOfResults, (item) => {
+        var displayFriends = _.map(arraryOfResults.slice(index, index + 15), (item) => {
             return (
                 <List.Item>
-                        <ButtonFriendsContoller view={view} userData={item.username} />
+                        <ButtonFriendsContoller view={view} userData={item.username} callbackParent={this.updateFriendList.bind(this)}/>
                     <Image avatar src={item.picture} />
                     <List.Content>
-                        {item.username}
+                        <Link to={"/friendprofile/" + item.username}>{item.username}</Link>
                     </List.Content>
                 </List.Item>
             )
         })
-
-        // var displayPending = _.map(waitingList, (item) => {
-        //     re
-        // })
 
         return (
             <div>
@@ -132,6 +119,7 @@ export default class  FriendsResults extends React.Component {
             <List divided verticalAlign='middle'>
                 {displayFriends}
             </List>
+            { index >= 15 ? <Button.Group floated="left"><Button onClick={() => this.paginateControl("back")}>Back</Button></Button.Group>  : null} { arraryOfResults.length >= 15 && arraryOfResults.length >= index + 15 ? <Button.Group floated="right"><Button onClick={() => this.paginateControl("more")}>More</Button></Button.Group> : null }
             </div>
         );
     }

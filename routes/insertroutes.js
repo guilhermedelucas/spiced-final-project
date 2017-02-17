@@ -204,8 +204,8 @@ router.post('/addfriend', function(req, res){
                 {
                     username_one: currentUser,
                     username_two: usernameToAdd,
-                    username_one_picture: pictureToAdd,
-                    username_two_picture: currentUserPicture,
+                    username_one_picture: currentUserPicture,
+                    username_two_picture: pictureToAdd,
                     currentStatus: "pending",
                     dateadded: new Date()
                 },
@@ -303,7 +303,28 @@ router.post('/acceptfriend', function(req, res){
     MongoClient.connect(url, (err, db) => {
         assert.equal(null, err);
         db.collection('friendships').update(
-            { username_one: usernameToAccept, username_two:currentUsername}, { $set: { currentStatus: "yes" }}, function(err){
+            { username_one: usernameToAccept, username_two: currentUsername}, { $set: { currentStatus: "yes" }}, function(err){
+            if (err){
+                res.json({
+                    success: false
+                })
+            } else {
+                res.json({
+                    success: true
+                })
+            }
+        })
+    })
+})
+
+router.post('/removefriend', function(req, res){
+    const { usernameToRemove } = req.body;
+    const currentUsername = req.session.username;
+    console.log(usernameToRemove, currentUsername);
+    MongoClient.connect(url, (err, db) => {
+        assert.equal(null, err);
+        db.collection('friendships').update(
+            { username_one: usernameToRemove, username_two: currentUsername}, { $set: { currentStatus: "no" }}, function(err){
             if (err){
                 res.json({
                     success: false

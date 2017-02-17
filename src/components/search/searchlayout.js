@@ -18,17 +18,16 @@ export default class  SearchLayout extends React.Component {
         };
     }
 
-    updateProfile(){
+    search(){
         const { search, radio } = this.state.target;
-        // console.log(this.state);
-        // console.log(search, radio);
         const that = this;
         axios.get('/getdata/search/' + search.toLowerCase() + "?searchtype=" + radio)
         .then(function (response) {
             // console.log(response.data.searchData);
             that.setState({
                 searchResult: response.data.searchData,
-                currentUser: response.data.currentUserData
+                currentUser: response.data.currentUserData,
+                friendsRequest: response.data.friendsRequest
             });
         })
         .catch(function (error) {
@@ -44,7 +43,7 @@ export default class  SearchLayout extends React.Component {
                     <h2>Search tool</h2>
                     <div style={{display: "inline-flex", flexDirection: "row", width:"100%"}}>
                         <Input type="text" instance={this.state.target} propertyKey="search" placeholder="" style={inputStyle} />
-                        <div><button style={inputStyleButton} onClick={this.updateProfile.bind(this)}>Search  <i className="search link icon"></i></button></div>
+                        <div><button style={inputStyleButton} onClick={this.search.bind(this)}>Search  <i className="search link icon"></i></button></div>
                     </div>
                     <div id="searchInContainer" style={{
                         display: "inline-flex", justifyContent: "center", flexDirection: "row", width: "100%", fontSize: "0.85em"}}>
@@ -64,7 +63,7 @@ export default class  SearchLayout extends React.Component {
                             <Input type="radio" name="check" value="collection" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top" }}  label="  Movies" />
                         </div>
                     </div>
-                    <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser}/>
+                    <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser} friendsRequest={this.state.friendsRequest} callbackParent={this.search.bind(this)}/>
                 </div>
             </div>
         );

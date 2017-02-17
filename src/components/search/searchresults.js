@@ -9,6 +9,8 @@ export default class  SearchResult extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchResult: {},
+            currentUser: {},
         };
     }
 
@@ -16,48 +18,25 @@ export default class  SearchResult extends React.Component {
 
     }
 
-    addFriend(username) {
+    addFriend(username, picture, searchResult) {
         var that = this;
 
         axios.post('/insertdata/addfriend/', {username, picture})
         .then(function (response) {
-            // console.log(response.data.searchData);
-            // that.setState({
-            //     searchResult: response.data.searchData
-            // });
+            if (response.data.success) {
+                _.map(searchResult, function(item, index){
+                    item.username == username ? searchResult.splice(index, 1) : null
+                })
+            }
+            that.props.callbackParent(searchResult);
         })
         .catch(function (error) {
             console.log(error);
         });
-
-
-        // axios.post('/insertdata/addfriend', {
-        //     username
-        // })
-        // .then(function (response) {
-        //     console.log("hello");
-        //     if (response.data.sucess) {
-        //         that.setState({
-        //             usernameExists: false,
-        //             emailExists: false
-        //         })
-        //        browserHistory.push('/profile');
-        //     }  else if (response.data.username == false){
-        //        console.log("username");
-        //        that.setState({
-        //            usernameExists: true
-        //        })
-        //    } else if (response.data.email == false){
-        //        console.log("email");
-        //        that.setState({
-        //            emailExists: true,
-        //            usernameExists: false
-        //        })
-        // })
     }
 
     render() {
-        const { currentUser, searchResult } = this.props;
+        const { currentUser, searchResult, friendsRequest } = this.props;
 
         const filterSearchResult = _.filter(searchResult, (item) => {
             if (item.username != currentUser[0].username) {
@@ -65,35 +44,28 @@ export default class  SearchResult extends React.Component {
             }
         })
 
-        const friendsList = [];
-
-        _.filter(currentUser, (item) => {
-            _.filter(item.friends, (list) => {
-                friendsList.push(list.username)
-            })
-        })
+        console.log(friendsRequest);
 
         _.map(filterSearchResult, (item) => {
-        console.log(_.some(friendsList, (element) => {
-            console.log(element, item.username);
-            return item.username == element })
-            );
-        })
-
-        console.log(friendsList);
+            // console.log(item.username);
+            console.log(_.some(friendsRequest, function(element){
+                // console.log(element.username_one, element.username_two);
+                return (element.username_one == item.username || element.username_two == item.username)
+            }))
+        });
 
         var displayResults = _.map(filterSearchResult, (item) => {
             return (
                 <List.Item>
-
-                    { _.some(friendsList, (element) => {
-                        return item.username == element }) ? null : (<List.Content floated='right'>
-                            <Button onClick={() => this.addFriend(item.username, item.picture)}>Add</Button>
-                        </List.Content>)
-                    }
+                    <List.Content floated='right'>
+                        { _.some(friendsRequest, function(element){
+                            return (element.username_one == item.username || element.username_two == item.username)
+                        }) ? null : <Button onClick={() => this.addFriend(item.username, item.picture, searchResult)}>Add</Button>
+                        }
+                    </List.Content>
                     <Image avatar src={item.picture} />
                     <List.Content>
-                        {item.username}
+                        <Link to={"/friendprofile/" + item.username}>{item.username}</Link>
                     </List.Content>
                 </List.Item>
             )

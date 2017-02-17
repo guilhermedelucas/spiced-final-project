@@ -20,10 +20,10 @@ export default class StatsBar extends React.Component {
                 <p style={{lineHeight: "1em"}} >Friends<span style={label}>{friendsTotal || 0}</span></p>
                 </a>
                 <a className="item" style={{backgroundColor: "rgba(0, 0, 0, 0.0470588)"}} onClick={() => this.listController("pending")}>
-                <p style={{lineHeight: "1em"}}>Pending Requests<span style={label}>{waitingTotal || 0}</span></p>
+                <p style={{lineHeight: "1em"}}>Pending Requests<span style={label}>{ replyTotal || 0}</span></p>
                 </a>
                 <a className="item" style={{backgroundColor: "rgba(0, 0, 0, 0.0470588)"}} onClick={() => this.listController("sent")}>
-                <p style={{lineHeight: "1em"}}>Requests Sent  <span style={label}>{replyTotal || 0}</span></p>
+                <p style={{lineHeight: "1em"}}>Requests Sent  <span style={label}>{waitingTotal || 0}</span></p>
                 </a>
             </div>
     )}

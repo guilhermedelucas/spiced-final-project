@@ -17,14 +17,15 @@ export default class RegisterForm extends React.Component {
         axios.get('/getdata/userdata').then((response) => {
             if (response.data.loggedIn) {
                 const { username, email, firstName, lastName, birthday, job, city, country, phone, picture, items, friends, borrowed, lended, messages } = response.data.userData[0];
+                const { friendsTotal } = response.data;
                 this.setState({
                     username, email, firstName, lastName, birthday, job, city, country, phone, picture,
                     items: items || [],
                     borrowed: borrowed || [],
                     lended: lended || [],
-                    friends: friends || []
+                    friendsTotal
                 })
-                console.log(this.state);
+                console.log(this.state.friendsTotal);
             } else {
                 browserHistory.push('/');
             }
@@ -105,7 +106,8 @@ export default class RegisterForm extends React.Component {
     }
 
     render(){
-        const { username, email, firstName, lastName, birthday, job, city, country, phone, picture, items, friends, borrowed, lended, messages } = this.state;
+        const { username, email, firstName, lastName, birthday, job, city, country, phone, picture, items, friendsTotal, borrowed, lended, messages } = this.state;
+        console.log(this.state.friendsTotal);
         let $imagePreview = null;
         const imageStyle = {
             width: "200px",height: "200px", borderRadius: "50%", backgroundPosition: "center center",  backgroundSize: "cover", backgroundImage: "url(" + picture + ")", margin:"auto", boxShadow: "0px 5px 24px 0px rgba(0,0,0,0.1)", marginTop: "-56px", border:"10px solid white"
@@ -129,7 +131,7 @@ export default class RegisterForm extends React.Component {
                 <div style={{textAlign:"center", padding:"10px 0"}}>
                     <h2>{username}</h2>
                 </div>
-                <StatsBar itemsTotal={items.length} friendsTotal={friends.total} borrowedTotal={borrowed.length} lendedTotal={lended.length}/>
+                <StatsBar itemsTotal={items.length} friendsTotal={friendsTotal} borrowedTotal={borrowed.length} lendedTotal={lended.length}/>
                 <div style={{display: "inline-flex", flexDirection:"row", width:"100%"}}>
                     <div style={{flexGrow: 1, paddingRight: "10px"}}>
                         <h3>First name</h3>

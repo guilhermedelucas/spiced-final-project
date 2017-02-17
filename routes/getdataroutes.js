@@ -25,11 +25,11 @@ router.get('/navbar', function(req, res) {
             console.log("Conected successfully to server");
             db.collection('userData')
             .aggregate([
-                 { $match: { username: req.session.username } },
-                 { $unwind: "$items"},
-                 { $group: { _id : '$items.collection', genre: { $addToSet: '$items.genre'}, platform: {$addToSet: '$items.platform'}, media: {$addToSet:'$items.media'}}},
-                 { $sort: {_id: 1}}
-             ]).toArray(function(err, result) {
+                    { $match: { username: req.session.username } },
+                    { $unwind: "$items"},
+                    { $group: { _id : '$items.collection', genre: { $addToSet: '$items.genre'}, platform: {$addToSet: '$items.platform'}, media: {$addToSet:'$items.media'}}},
+                    { $sort: {_id: 1}}
+                ]).toArray(function(err, result) {
                 if (err) {
                     console.log(err);
                 } else {
@@ -48,6 +48,8 @@ router.get('/navbar', function(req, res) {
 })
 
 router.get('/userdata', function(req, res) {
+    const currentUser = req.session.username;
+    console.log(currentUser);
     if (req.session.username) {
         MongoClient.connect(url, function (err, db) {
             assert.equal(null, err);
@@ -55,9 +57,15 @@ router.get('/userdata', function(req, res) {
                 if (err) {
                     console.log(err)
                 } else if (result.length){
-                    res.json({
-                        userData: result,
-                        loggedIn: true
+                    db.collection('friendships').find({ $or: [{username_one: currentUser}, {username_two: currentUser}], $and: [{ $or: [{currentStatus: "yes"}]}]}).count(function(err, count){
+                        const friendsTotal = count;
+                        console.log(err, count);
+
+                        res.json({
+                            userData: result,
+                            friendsTotal,
+                            loggedIn: true
+                        })
                     })
                 } else {
                     res.send('no document found')
@@ -70,6 +78,51 @@ router.get('/userdata', function(req, res) {
         })
     }
 })
+
+router.get('/frienddata/:id', function(req, res) {
+    const currentFriend = req.params.id;
+    const currentUser = req.session.username;
+    console.log(currentFriend);
+    MongoClient.connect(url, function (err, db) {
+        assert.equal(null, err);
+        db.collection('userData').find({username: currentFriend}, {password:0}).toArray(function(err, result){
+            const userData = { result }
+            if (err) {
+                console.log(err)
+            } else if (result.length){
+                db.collection('friendships').find({$or: [{username_one: currentUser}, {username_two: currentFriend}], $and: [{ $or: [{username_one: currentFriend}, { username_two: currentUser
+                        }]}], $and: [{currentStatus: "yes"}]}
+                ).toArray(function(err, result){
+                    console.log(result);
+                    if (result.length > 0) {
+                        const friendsCheck = true;
+                        db.collection('friendships').find({ $or: [{username_one: currentUser}, {username_two: currentUser}], $and: [{ $or: [{currentStatus: "yes"}]}]}).count(function(err, result){
+                            const friendsTotal = result
+                            res.json({
+                                userData,
+                                friendsCheck,
+                                friendsTotal
+                            })
+                        })
+                    } else {
+                            const friendsCheck = false;
+                            res.json({
+                                userData,
+                                friendsCheck,
+                                friendsTotal
+                            })
+                        }
+                    })
+            } else {
+                console.log("error" + err);
+                res.send('user not found')
+            }
+        })
+    })
+})
+
+
+
 
 router.get('/friendslist', function(req, res){
     const currentUser = req.session.username
@@ -168,9 +221,13 @@ router.get('/search/:id', function(req, res){
                 const searchData = result;
                 db.collection('userData').find({username: currentUser}).toArray(function(err, result){
                     const currentUserData = result;
-                    res.json({
-                        searchData,
-                        currentUserData
+                    db.collection('friendships').find({ $or: [{username_one: currentUser}, {username_two: currentUser}], $and: [{ $or: [{currentStatus: "yes"}, {currentStatus:"no"}, {currentStatus:"pending"}]}]}).toArray(function(err, result){
+                        const friendsRequest = result;
+                        res.json({
+                            searchData,
+                            currentUserData,
+                            friendsRequest
+                        })
                     })
                 })
             })
@@ -225,39 +282,5 @@ router.post('/login', function(req, res){
         })
     })
 });
-
-
-
-
-// console.log(data);
-// var checkPass = hashingAndChecking.checkPassword(req.body.password, data.rows[0].password); //typedPass, dbPass
-// return checkPass.then(function(data) {
-//     // if pass match >> data = true
-//     if (data === true) {
-//         console.log("password match");
-//         req.session = {
-//             username: req.body.username
-//         }
-//         res.json({
-//             success: true,
-//             session: req.body.username
-//         })
-//         console.log("response sent");
-//     } else if (data === false) {
-//         console.log("password doesn't match");
-//         res.json({
-//             error: "Password is wrong! Please check and submit again."
-//         })
-//     }
-// })
-// }).catch(function(err) {
-// console.log(err);
-// res.json({
-//     error: "Username is not correct!"
-// });
-// });
-
-
-
 
 module.exports = router;
