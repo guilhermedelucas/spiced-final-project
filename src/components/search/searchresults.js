@@ -2,14 +2,14 @@ import axios from 'axios';
 import React from 'react';
 import { Link, browserHistory } from 'react-router';
 import Results from './searchresults';
-import { Button, Image, List } from 'semantic-ui-react'
+import { Button, Image, List } from 'semantic-ui-react';
 
 
 export default class  SearchResult extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchResult: {},
+            searchResult: [],
             currentUser: {},
         };
     }
@@ -20,7 +20,6 @@ export default class  SearchResult extends React.Component {
 
     addFriend(username, picture, searchResult) {
         var that = this;
-
         axios.post('/insertdata/addfriend/', {username, picture})
         .then(function (response) {
             if (response.data.success) {
@@ -36,22 +35,19 @@ export default class  SearchResult extends React.Component {
     }
 
     render() {
-        const { currentUser, searchResult, friendsRequest } = this.props;
+        const { currentUser, searchResult, friendsRequest, search } = this.props;
 
+        if (search == "friends") {
         const filterSearchResult = _.filter(searchResult, (item) => {
             if (item.username != currentUser[0].username) {
                 return item
             }
         })
 
-        console.log(friendsRequest);
-
         _.map(filterSearchResult, (item) => {
-            // console.log(item.username);
-            console.log(_.some(friendsRequest, function(element){
-                // console.log(element.username_one, element.username_two);
+            _.some(friendsRequest, function(element){
                 return (element.username_one == item.username || element.username_two == item.username)
-            }))
+            })
         });
 
         var displayResults = _.map(filterSearchResult, (item) => {
@@ -70,6 +66,46 @@ export default class  SearchResult extends React.Component {
                 </List.Item>
             )
         })
+
+    } else {
+
+        const arraryOfResults =[];
+
+        _.map(searchResult, function(item){
+            arraryOfResults.push({
+                name: item.item.name,
+                genre: item.item.genre,
+                imgUrl: item.item.imgUrl,
+                collection: item.item.collection,
+                platform: item.item.platform,
+                album: item.item.album,
+                artist: item.item.artist,
+                publisher: item.item.publisher,
+                director: item.item.director,
+                actors: item.item.actors,
+                media: item.item.media,
+                username: item.username
+            })
+        })
+
+        const sortedArrayOfResults = _.sortBy(arraryOfResults, 'name');
+        console.log(sortedArrayOfResults);
+
+        var displayResults = _.map(sortedArrayOfResults, function(item) {
+            return(
+            <List.Item>
+                <List.Content floated='right'>
+                    <Button>Add</Button>
+                </List.Content>
+                <Image avatar src={item.imgUrl} />
+                <List.Content>
+                    {item.name} { " > " + item.platform || " > " + item.media || "" } {" > " + item.genre}< br/>
+                    <Link to={"/friendprofile/" + item.username}>{item.username}</Link>
+                </List.Content>
+            </List.Item>
+            )
+        })
+    }
 
         return (
             <List divided verticalAlign='middle'>

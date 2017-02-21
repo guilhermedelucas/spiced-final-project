@@ -60,7 +60,6 @@ router.get('/userdata', function(req, res) {
                     db.collection('friendships').find({ $or: [{username_one: currentUser}, {username_two: currentUser}], $and: [{ $or: [{currentStatus: "yes"}]}]}).count(function(err, count){
                         const friendsTotal = count;
                         console.log(err, count);
-
                         res.json({
                             userData: result,
                             friendsTotal,
@@ -90,26 +89,21 @@ router.get('/frienddata/:id', function(req, res) {
             if (err) {
                 console.log(err)
             } else if (result.length){
-                db.collection('friendships').find({$or: [{username_one: currentUser}, {username_two: currentFriend}], $and: [{ $or: [{username_one: currentFriend}, { username_two: currentUser
-                        }]}], $and: [{currentStatus: "yes"}]}
-                ).toArray(function(err, result){
-                    console.log(result);
+                db.collection('friendships').find({ $or: [{ $and: [{username_one: currentUser}, {username_two: currentFriend}, {currentStatus: "yes"}]}, { $and: [{username_one: currentFriend}, {username_two: currentUser}, {currentStatus: "yes"} ]}]}).toArray(function(err, result){
                     if (result.length > 0) {
                         const friendsCheck = true;
-                        db.collection('friendships').find({ $or: [{username_one: currentUser}, {username_two: currentUser}], $and: [{ $or: [{currentStatus: "yes"}]}]}).count(function(err, result){
-                            const friendsTotal = result
+                        db.collection('friendships').find({ $or: [{username_one: currentFriend}, {username_two: currentFriend}], $and: [{ $or: [{currentStatus: "yes"}]}]}).toArray(function(err, result){
+                            const friendsTotal = result.length;
+                            const friendsData = result
                             res.json({
-                                userData,
-                                friendsCheck,
-                                friendsTotal
+                                userData, friendsCheck, friendsTotal, friendsData
                             })
                         })
                     } else {
                             const friendsCheck = false;
                             res.json({
                                 userData,
-                                friendsCheck,
-                                friendsTotal
+                                friendsCheck
                             })
                         }
                     })
@@ -156,14 +150,35 @@ router.get('/friendslist', function(req, res){
         })
 })
 
+router.get('/frienditems/:id', function(req, res){
+    const currentFriend = req.params.id;
+    MongoClient.connect(url, function (err, db){
+        assert.equal(null, err);
+        db.collection('userData').find({username: currentFriend}, {password: 0}).toArray(function(err,result){
+            if (err){
+                console.log(err);
+                res.json({
+                    success: err
+                })
+            } else {
+                console.log(result);
+                const userItems = result
+                res.json({
+                    currentFriend, userItems
+                })
+            }
+        })
+    })
+})
 
 router.get('/singleitem/:id', function(req, res){
     var itemId = req.params.id;
+    var currentUser = req.session.username;
     MongoClient.connect(url, function (err, db){
         assert.equal(null, err);
         db.collection('userData')
         .aggregate([
-            { $match: { username: "guilhermedelucas" } },
+            { $match: { username: currentUser } },
             { $unwind: "$items"},
             { $match: { "items._id": ObjectId(itemId)}},
             { $project: { item: "$items" } }
@@ -212,7 +227,7 @@ router.get('/search/:id', function(req, res){
     const currentUser = req.session.username
     var search = req.params.id;
     if (searchType == "friends") {
-        var regex = RegExp("/.*" + search + ".*/");
+        var regex = RegExp("/.*" + search + ".*/i");
         var query = { username: new RegExp('^' + search) };
         console.log(query);
         MongoClient.connect(url, function(err, db){
@@ -232,7 +247,41 @@ router.get('/search/:id', function(req, res){
                 })
             })
         })
-    }
+    } else {
+        // var regex = RegExp("/.*" + search + ".*/");
+
+        MongoClient.connect(url, function(err, db){
+            assert.equal(null, err);
+            db.collection('friendships').find({ $or: [{username_one: currentUser}, {username_two: currentUser}], $and: [{currentStatus: "yes"}]}).toArray(function(err, result){
+                var friendsArray = [];
+                result.map(function(item, index){
+                    if ( item.username_one == currentUser ){
+                        friendsArray.push(item.username_two);
+                    } if (item.username_two == currentUser ){
+                        friendsArray.push(item.username_one)
+                    }
+                })
+                db.collection('userData').aggregate([{ $match: { username: { $in: friendsArray }}}, { $unwind: "$items"}, { $match: { "items.name": { $regex : "" + search + "", '$options' : 'i' }}}, { $project: { item: "$items", username: true}}]).toArray(function(err, result){
+                    console.log(result);
+                    const searchData = result;
+                    res.json({
+                        searchData,
+                        currentUser,
+                    })
+                    // console.log(result);
+                    // now display results and also paginate the results
+                });
+        })
+
+    })
+}
+
+// ([{ $match: { username: { $in: ["guilhermedelucas", "lukearscott"] }}}, { $unwind: "$items"}, { $match: { "items.name": { $regex : /^Super/i } } }, { $project: { item: "$items", username: true}}])
+
+    // { $match: { username: "guilhermedelucas" } },
+    // { $unwind: "$items"},
+    // { $match: { "items._id": ObjectId(itemId)}},
+    // { $project: { item: "$items" } }
     // else {
     //     var regex = RegExp("/.*" + search + ".*/");
     //     var query = { username: new RegExp('^' + search) };

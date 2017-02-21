@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
+const MulterResizer = require('multer-resizer');
+const fs = require('fs');
+
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const ObjectID = require('mongodb').ObjectID;
 const hashPassword = require('./passwordhashing/hash').hashPassword;
+
+
 
 router.use(cookieParser());
 router.use(cookieSession({
@@ -39,19 +44,34 @@ var diskStorage = multer.diskStorage({
     }
 });
 
-var uploader = multer({
-    storage: diskStorage,
-    limits: {
-        filesize: 5097152
-    }
+// var uploader = multer({
+//     storage: diskStorage,
+//     limits: {
+//         filesize: 5097152
+//     }
+// });
+
+
+const resizer = new MulterResizer({
+    multer: multer({storage: diskStorage}),
+    tasks: [
+        {
+            resize: {
+                width: 300,
+                height: 300,
+            }
+        }
+    ]
 });
 
-router.post('/saveimage', uploader.single('file'), function(req, res) {
-    console.log(req.file);
+router.post('/saveimage', resizer.single('file'), function(req, res) {
+    fs.unlink(req.file.path);
+    const filename = req.file.filename;
+    var newfilename = filename.replace(".jpg", "_resized.png");
     if (req.file) {
         res.json({
             success: true,
-            file: req.file.filename
+            file: newfilename
         })
     } else {
         res.json({

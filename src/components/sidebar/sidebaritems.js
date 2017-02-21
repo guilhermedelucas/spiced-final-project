@@ -20,14 +20,10 @@ export default class SideBarItems extends React.Component {
 
     componentDidMount() {
         axios.get('/getdata/navbar').then((response) => {
-            if (response.data.loggedIn) {
-                this.setState({
-                    navbar: response.data.navbar,
-                })
-            } else {
-                browserHistory.push('/');
-            }
-        });
+            this.setState({
+                navbar: response.data.navbar,
+            })
+        })
     }
 
     dropdown(e){

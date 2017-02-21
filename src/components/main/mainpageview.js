@@ -22,14 +22,10 @@ export default class MainPageView extends React.Component {
 
     componentWillMount() {
         axios.get('/getdata/userdata').then((response) => {
-            if (response.data.loggedIn) {
-                this.setState({
-                    userData: response.data.userData[0]
-                })
-            } else {
-                browserHistory.push('/');
-            }
-        });
+            this.setState({
+                userData: response.data.userData[0]
+            })
+        })
     }
 
     onChildChanged(newState){

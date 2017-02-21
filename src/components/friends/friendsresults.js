@@ -45,17 +45,20 @@ export default class  FriendsResults extends React.Component {
         if (view == "friends") {
             this.setState({
                 view,
-                renderList: this.state.friendsList
+                renderList: this.state.friendsList,
+                index: 0
             })
         } else if (view == "pending") {
             this.setState({
                 view,
-                renderList: this.state.replyList
+                renderList: this.state.replyList,
+                index: 0
             })
         } else if (view == "sent"){
             this.setState({
                 view,
-                renderList: this.state.waitingList
+                renderList: this.state.waitingList,
+                index: 0
             })
         }
     }
@@ -84,7 +87,6 @@ export default class  FriendsResults extends React.Component {
         }) : this.setState({
             index: (index - 15)
         })
-        console.log(this.state.index);
     }
 
     render() {

@@ -14,6 +14,7 @@ export default class DisplayItem extends React.Component {
     componentDidMount() {
         console.log("will mount");
         axios.get('/getdata/singleitem/' + this.props.query).then((response) => {
+            console.log(response);
             this.setState({
                 name: response.data.itemData[0].item.name,
                 genre: response.data.itemData[0].item.genre,
@@ -91,7 +92,7 @@ export default class DisplayItem extends React.Component {
     render() {
         let $imagePreview = null;
         if (this.state.imagePreviewUrl) {
-            $imagePreview = (<img src={this.state.imagePreviewUrl} style={{borderRadius: "15px", width: "100%"}}/>);
+            $imagePreview = (<img src={this.state.imagePreviewUrl} style={{borderRadius: "15px", maxHeight: "300px"}}/>);
         } else {
             $imagePreview = (<div className="previewText" style={{color: "rgb(102, 102, 102)", fontWeigth: "bold"}}>Please select an Image for Preview</div>);
         }
@@ -100,10 +101,10 @@ export default class DisplayItem extends React.Component {
                 <div className="ui raised very padded text container segment" style={{marginTop: "50px"}}>
                 <h2>{this.state.name}</h2>
                 <input label='Title' onChange={this.handleChange.bind(this)} style={inputStyle} name='name' placeholder='Insert the title' value={this.state.name}/>
-                <div className="imgPreview" style={{width: "100%", paddingTop: "35px"}}>
+                <div className="imgPreview" style={{width: "100%", paddingTop: "35px", textAlign: "center"}}>
                     {$imagePreview}
                 </div>
-                <h4>Image</h4>
+                <h4>Change or insert image</h4>
                 <input className="fileInput" type="file" onChange={(e) => this.handleImageChange(e)} />
                 <h4>Genre</h4>
                     <select className="ui fluid dropdown" name="genre" style={inputStyle} onChange={this.handleChange.bind(this)} value={this.state.genre}>

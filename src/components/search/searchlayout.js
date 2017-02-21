@@ -14,7 +14,6 @@ export default class  SearchLayout extends React.Component {
             suggestions: [],
             target: {radio: "friends"},
             search: {},
-
         };
     }
 
@@ -23,7 +22,7 @@ export default class  SearchLayout extends React.Component {
         const that = this;
         axios.get('/getdata/search/' + search.toLowerCase() + "?searchtype=" + radio)
         .then(function (response) {
-            // console.log(response.data.searchData);
+            console.log(response);
             that.setState({
                 searchResult: response.data.searchData,
                 currentUser: response.data.currentUserData,
@@ -51,19 +50,19 @@ export default class  SearchLayout extends React.Component {
                             <Input type="radio" name="check" value="friends" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}} label="  Friends" defaultChecked/>
                         </div>
                         <div style={radioStyle}>
-                            <Input type="radio" name="check" value="collection" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Books" />
+                            <Input type="radio" name="check" value="books" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Books" />
                         </div>
                         <div style={radioStyle}>
-                            <Input type="radio" name="check" value="collection"  instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Games" />
+                            <Input type="radio" name="check" value="games"  instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Games" />
                         </div>
                         <div style={radioStyle}>
-                            <Input type="radio" name="check" value="collection"  instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Music" />
+                            <Input type="radio" name="check" value="music"  instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Music" />
                         </div>
                         <div style={radioStyle}>
-                            <Input type="radio" name="check" value="collection" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top" }}  label="  Movies" />
+                            <Input type="radio" name="check" value="movies" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top" }}  label="  Movies" />
                         </div>
                     </div>
-                    <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser} friendsRequest={this.state.friendsRequest} callbackParent={this.search.bind(this)}/>
+                    <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser} friendsRequest={this.state.friendsRequest} callbackParent={this.search.bind(this)} search={this.state.radio}/>
                 </div>
             </div>
         );

@@ -14,3 +14,22 @@
     flex-grow: 3;
     padding-bottom: 6px;
 }
+
+
+#letters * {
+  fill-opacity: 0;
+  transition: fill-opacity 1s;
+}
+
+#letters.finished * {
+  fill-opacity: 1;
+}
+
+#forms {
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+#forms.finished {
+  opacity: 1;
+}
