@@ -13,6 +13,7 @@ import SearchPage from './components/search/searchview';
 import FriendsPage from './components/friends/friendsview';
 import FriendProfile from './components/friendprofile/friendprofilemain';
 import FriendItems from './components/frienditems/frienditemsmain';
+import Messages from './components/messages/messagesmain'
 
 const valideUserNotLogged = (nextState, replace, callback) => {
     axios.get('/getdata/loggedin/').then(function (response) {
@@ -49,5 +50,7 @@ ReactDOM.render(
             <Route name="friendsitems" path="/frienditems/:query" onEnter={valideUserNotLogged} component={FriendItems}/>
             <Route name="friends" path="friends" onEnter={valideUserNotLogged} component={FriendsPage}/>
             <Route name="friendprofile" path="friendprofile/:query" onEnter={valideUserNotLogged} component={FriendProfile}/>
+            <Route name="messages" path="mymessages" onEnter={valideUserNotLogged} component={Messages}/>
+
         </Router>,
     document.getElementById('main'));

@@ -8,7 +8,8 @@ export default class RenderProfile extends React.Component {
     }
 
     render(){
-        const { firstName, lastName, birthday, job, city, country, phone } = this.props;
+        const { firstName, lastName, birthday, job, city, country, phone, email } = this.props;
+        console.log(this.props);
 
 
         return (
@@ -47,6 +48,10 @@ export default class RenderProfile extends React.Component {
                    <div style={{flexGrow: 1, paddingRight: "10px"}}>
                        <h3>Phone</h3>
                        <input type="text" placeholder={"Insert your phone number"} style={inputStyle} value={phone} disabled/>
+                   </div>
+                   <div style={{flexGrow: 4, paddingRight: "10px"}}>
+                       <h3>email</h3>
+                       <input type="text" placeholder={"Insert your phone number"} style={inputStyle} value={email} disabled/>
                    </div>
                 </div>
             </div>

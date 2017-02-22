@@ -54,9 +54,14 @@ export default class Topbar extends React.Component {
                     <a className="item" onClick={() => {this.logOut()}}  title="Log out">
                         <i className="power icon" alt="LogOut"></i>
                     </a>
+                    <a className="item">
+                        <Link to="/mymessages" style={{color: "black"}}>
+                            <i className="mail icon"></i>
+                        </Link>
+                    </a>
                     <a className="item" style={{paddingRight: "30px"}}>
                         <Link to="/search">
-                            <i className="search link icon"></i>
+                            <i className="search link icon" title="Search"></i>
                         </Link>
                     </a>
                 </div>

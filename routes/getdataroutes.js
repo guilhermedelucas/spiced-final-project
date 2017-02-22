@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const checkPassword = require('./passwordhashing/hash').checkPassword;
+const _ = require("underscore");
 
 //Mongo import and config
 const MongoClient = require('mongodb').MongoClient;
@@ -158,13 +159,46 @@ router.get('/frienditems/:id', function(req, res){
             if (err){
                 console.log(err);
                 res.json({
-                    success: err
+                    success: false
                 })
             } else {
                 console.log(result);
+                var user
                 const userItems = result
                 res.json({
                     currentFriend, userItems
+                })
+            }
+        })
+    })
+})
+
+router.get('/mymessages', function(req, res){
+    var currentUser = req.session.username;
+    MongoClient.connect(url, function (err,db){
+        assert.equal(null, err);
+        db.collection('messages').find({ $or: [{from: currentUser}, {to: currentUser}]}).sort({sent: -1}).toArray(function(err, result){
+            if(err){
+                res.json({
+                    success: false
+                })
+            } else {
+                const messages = result;
+                var friendsArray = [];
+                result.map(function(item, index){
+                    if ( item.from == currentUser ){
+                        friendsArray.push(item.to);
+                    } if (item.to == currentUser ){
+                        friendsArray.push(item.from)
+                    }
+                })
+                const uniqueFrienList = _.uniq(friendsArray)
+                db.collection('userData').aggregate({ $match: { username: { $in: uniqueFrienList }}}, { $project: { username: true, picture: true}}).toArray(function(err, result){
+                    const friendData = result
+                    res.json({
+                        messages,
+                        friendData
+                    })
                 })
             }
         })

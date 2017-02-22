@@ -25,7 +25,7 @@ export default class FriendItemsMain extends React.Component {
                 <TopBar callbackParent={this.onChildChanged} view={this.state.view}/>
                 <SideBar query={this.props.location.query}/>
                 <div className="ui raised very padded text container segment" style={{height: "100vh", overflow: "auto"}}>
-                    <div style={{display:"inline-flex", flexDirection: "column", width: "100%", overflow:"auto"}}>
+                    <div style={{display:"inline-flex", flexDirection: "column", width: "100%"}}>
                         <FriendItemDisplay currentFriend={this.props.params.query}/>
                     </div>
                 </div>

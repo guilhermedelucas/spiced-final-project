@@ -71,7 +71,7 @@ export default class FriendProfileForm extends React.Component {
                 toRender = ( <FriendsListRender friendsList={this.state.friendsData} currentFriend={username}/> );
             } else {
                 toRender =
-                    ( <ProfileRender firstName={firstName} lastName={lastName} birthday={birthday} job={job} city={city} country={country} phone={phone} /> );
+                    ( <ProfileRender firstName={firstName} lastName={lastName} birthday={birthday} job={job} city={city} country={country} phone={phone} email={email} /> );
             }
 
         return(

@@ -50,16 +50,7 @@ export default class  SearchLayout extends React.Component {
                             <Input type="radio" name="check" value="friends" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}} label="  Friends" defaultChecked/>
                         </div>
                         <div style={radioStyle}>
-                            <Input type="radio" name="check" value="books" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Books" />
-                        </div>
-                        <div style={radioStyle}>
-                            <Input type="radio" name="check" value="games"  instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Games" />
-                        </div>
-                        <div style={radioStyle}>
-                            <Input type="radio" name="check" value="music"  instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Music" />
-                        </div>
-                        <div style={radioStyle}>
-                            <Input type="radio" name="check" value="movies" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top" }}  label="  Movies" />
+                            <Input type="radio" name="check" value="items" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Items" />
                         </div>
                     </div>
                     <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser} friendsRequest={this.state.friendsRequest} callbackParent={this.search.bind(this)} search={this.state.radio}/>
