@@ -73,7 +73,7 @@ export default class MusicForm extends React.Component {
         let { imagePreviewUrl } = this.state;
         let $imagePreview = null;
         if (imagePreviewUrl) {
-            $imagePreview = (<img src={imagePreviewUrl} style={{borderRadius: "15px", width: "100%"}}/>);
+            $imagePreview = (<img src={imagePreviewUrl} style={{borderRadius: "15px", maxHeight: "200px", margin: "auto"}}/>);
         } else {
             $imagePreview = (<div className="previewText" style={{color: "rgb(102, 102, 102)", fontWeigth: "bold"}}>Please select an Image for Preview</div>);
         }
@@ -82,7 +82,7 @@ export default class MusicForm extends React.Component {
             <h2>{this.props.title}</h2>
                 <h4>Title</h4>
                 <input label='Title' onChange={this.handleChange.bind(this)} style={inputStyle} name='name' placeholder='Insert the title' value={this.state.name}/>
-                <div className="imgPreview" style={{width: "100%", paddingTop: "35px"}}>
+                    <div className="imgPreview" style={{width: "100%", paddingTop: "35px", display:"flex"}}>
                     {$imagePreview}
                 </div>
                 <h4>Image</h4>
@@ -109,7 +109,7 @@ export default class MusicForm extends React.Component {
                     </div>
                     <div style={{paddingTop: "24px", paddingRight: "30px", flexGrow: "2"}}>
                         <h4>Artist</h4>
-                        <input label='developer' style={inputStyle} onChange={this.handleChange.bind(this)} name='artist' placeholder='Inform the main Actors' value={this.state.artist}/>
+                        <input label='developer' style={inputStyle} onChange={this.handleChange.bind(this)} name='artist' placeholder='Inform the band or artist' value={this.state.artist}/>
                     </div>
                 </div>
                 <div style={{display: "inline-flex", width: "100%"}}>
@@ -125,7 +125,6 @@ export default class MusicForm extends React.Component {
                 {   this.state.uploadSuccess ?
                     <div className="ui success message">
                         <div class="header">Submit Completed</div>
-                        <p>Click on any input to clear the data.</p>
                     </div> : null
                 }
             </div>
@@ -134,7 +133,7 @@ export default class MusicForm extends React.Component {
 }
 
 const musicGenres = [
-    "Select the genre", "Alternative", "Bossa Nova", "Blues", "Classical", "Country", "Dance", "Death Metal", "Doom Metal", "Drum & Bass", "Electronic", "Folk", "Trance", "Gospel", "Grunge", "Hard Rock", "Hardcore", "Hip-Hop", "Indie Rock", "Jazz", "Metal", "New Wave", "Progressive Rock",  "House", "Lounge", "Orchestral", "Opera", "Pop", "Pop Punk", "Pop/Rock", "Punk", "R&B/Soul", "Rap", "Reggae", "Rock & Roll", "Soul", "Techno" ]
+    "Select the genre", "Alternative", "Bossa Nova", "Blues", "Classical", "Country", "Dance", "Death Metal", "Doom Metal", "Drum & Bass", "Electronic", "Folk", "Trance", "Gospel", "Grunge", "Hard Rock", "Hardcore", "Hip-Hop", "Indie Rock", "Jazz", "Metal", "New Wave", "Progressive Rock",  "House", "Lounge", "Orchestral", "Opera", "Pop", "Pop Punk", "Pop/Rock", "Punk", "R&B/Soul", "Rap", "Reggae", "Rock'n Roll", "Soul", "Techno" ]
 
 const inputStyle = {
     padding:" 0.67861429em 1em",

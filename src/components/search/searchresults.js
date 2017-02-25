@@ -36,6 +36,7 @@ export default class  SearchResult extends React.Component {
 
     render() {
         const { currentUser, searchResult, friendsRequest, search } = this.props;
+        console.log(search);
 
         if (search == "friends") {
         const filterSearchResult = _.filter(searchResult, (item) => {
@@ -73,7 +74,7 @@ export default class  SearchResult extends React.Component {
 
         _.map(searchResult, function(item){
             arraryOfResults.push({
-                name: item.item.name,
+                name: item.item.firstName,
                 genre: item.item.genre,
                 imgUrl: item.item.imgUrl,
                 collection: item.item.collection,
@@ -89,7 +90,6 @@ export default class  SearchResult extends React.Component {
         })
 
         const sortedArrayOfResults = _.sortBy(arraryOfResults, 'name');
-        console.log(sortedArrayOfResults);
 
         var displayResults = _.map(sortedArrayOfResults, function(item) {
             return(

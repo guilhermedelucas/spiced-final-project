@@ -73,7 +73,7 @@ export default class MoviesForm extends React.Component {
         let { imagePreviewUrl } = this.state;
         let $imagePreview = null;
         if (imagePreviewUrl) {
-            $imagePreview = (<img src={imagePreviewUrl} style={{borderRadius: "15px", width: "100%"}}/>);
+            $imagePreview = (<img src={imagePreviewUrl} style={{borderRadius: "15px", maxHeight: "200px", margin: "auto"}}/>);
         } else {
             $imagePreview = (<div className="previewText" style={{color: "rgb(102, 102, 102)", fontWeigth: "bold"}}>Please select an Image for Preview</div>);
         }
@@ -82,7 +82,7 @@ export default class MoviesForm extends React.Component {
             <h2>{this.props.title}</h2>
                 <h4>Title</h4>
                 <input label='Title' onChange={this.handleChange.bind(this)} style={inputStyle} name='name' placeholder='Insert the title' value={this.state.name}/>
-                <div className="imgPreview" style={{width: "100%", paddingTop: "35px"}}>
+                <div className="imgPreview" style={{width: "100%", paddingTop: "35px", display:"flex"}}>
                     {$imagePreview}
                 </div>
                 <h4>Image</h4>

@@ -25,7 +25,6 @@ export default class RegisterForm extends React.Component {
                     lended: lended || [],
                     friendsTotal
                 })
-                console.log(this.state.friendsTotal);
             } else {
                 browserHistory.push('/');
             }
@@ -83,13 +82,16 @@ export default class RegisterForm extends React.Component {
         }).then((response) => {
             if (response.data.success) {
                 let imgUrl = "./uploads/" + response.data.file;
+                console.log("hello picture");
                 this.setState({
-                    picture: imgUrl,
+                    picture: imgUrl
                 })
             } else {
                 console.log("didin't worked");
 
             }
+        }).catch((err)=>{
+            console.log(err);
         });
     }
 
@@ -107,7 +109,6 @@ export default class RegisterForm extends React.Component {
 
     render(){
         const { username, email, firstName, lastName, birthday, job, city, country, phone, picture, items, friendsTotal, borrowed, lended, messages } = this.state;
-        console.log(this.state.friendsTotal);
         let $imagePreview = null;
         const imageStyle = {
             width: "200px",height: "200px", borderRadius: "50%", backgroundPosition: "center center",  backgroundSize: "cover", backgroundImage: "url(" + picture + ")", margin:"auto", boxShadow: "0px 5px 24px 0px rgba(0,0,0,0.1)", marginTop: "-56px", border:"10px solid white"

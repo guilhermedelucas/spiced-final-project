@@ -20,18 +20,27 @@ export default class  SearchLayout extends React.Component {
     search(){
         const { search, radio } = this.state.target;
         const that = this;
+        if (search){
         axios.get('/getdata/search/' + search.toLowerCase() + "?searchtype=" + radio)
         .then(function (response) {
             console.log(response);
             that.setState({
                 searchResult: response.data.searchData,
                 currentUser: response.data.currentUserData,
-                friendsRequest: response.data.friendsRequest
-            });
+                friendsRequest: response.data.friendsRequest,
+                radio
+            })
         })
         .catch(function (error) {
             console.log(error);
         });
+    } else {
+        this.setState({
+            target: {
+                search: "Please insert a value"
+            }
+        })
+        }
     }
 
     render() {
@@ -53,7 +62,7 @@ export default class  SearchLayout extends React.Component {
                             <Input type="radio" name="check" value="items" instance={this.state.target} propertyKey="radio" style={{marginTop: "3px", verticalAlign: "top"}}  label="  Items" />
                         </div>
                     </div>
-                    <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser} friendsRequest={this.state.friendsRequest} callbackParent={this.search.bind(this)} search={this.state.radio}/>
+                    <Results searchResult={this.state.searchResult} currentUser={this.state.currentUser} friendsRequest={this.state.friendsRequest} callbackParent={this.search.bind(this)} search={this.state.radio} />
                 </div>
             </div>
         );

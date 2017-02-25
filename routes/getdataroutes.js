@@ -174,7 +174,7 @@ router.get('/frienditems/:id', function(req, res){
 })
 
 router.get('/mymessages', function(req, res){
-    var currentUser = req.session.username;
+    const currentUser = req.session.username;
     MongoClient.connect(url, function (err,db){
         assert.equal(null, err);
         db.collection('messages').find({ $or: [{from: currentUser}, {to: currentUser}]}).sort({sent: -1}).toArray(function(err, result){
@@ -193,11 +193,11 @@ router.get('/mymessages', function(req, res){
                     }
                 })
                 const uniqueFrienList = _.uniq(friendsArray)
-                db.collection('userData').aggregate({ $match: { username: { $in: uniqueFrienList }}}, { $project: { username: true, picture: true}}).toArray(function(err, result){
-                    const friendData = result
+                db.collection('userData').aggregate([{ $match: { username: { $in: uniqueFrienList }}}, { $project: { username: true, picture: true }}]).toArray(function(err, result){
+                    console.log(result);
+                    const friendData = result;
                     res.json({
-                        messages,
-                        friendData
+                        messages, friendData, currentUser
                     })
                 })
             }

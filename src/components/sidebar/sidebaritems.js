@@ -143,21 +143,21 @@ export default class SideBarItems extends React.Component {
                         <img src="../imgs/caniborrowlogo.png" width="200px" style={{padding: "10px 10px 10px 20px", marginTop: "15px", marginLeft: '10px'}}/>
                     </li>
                     <Divider style={{margin: "5px 0px"}}/>
-                    <Link to="/profile">
-                        <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>PROFILE</li>
-                    </Link>
-                    <Divider style={{margin: "5px 0px"}}/>
-                    <AddMoreNavBar/>
-                    <Divider style={{margin: "5px 0px"}}/>
                     <Link to="/home">
                         <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>ALL MY STUFF</li>
                     </Link>
                     <Divider style={{margin: "5px 0px"}}/>
+                    {list}
+                    <AddMoreNavBar/>
+                    <Divider style={{margin: "5px 0px"}}/>
                     <Link to="/friends">
                         <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>FRIENDS</li>
                     </Link>
-                        <Divider style={{margin: "5px 0px"}}/>
-                    {list}
+                    <Divider style={{margin: "5px 0px"}}/>
+                    <Link to="/profile">
+                        <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white"}}>PROFILE</li>
+                    </Link>
+                    <Divider style={{margin: "5px 0px"}}/>
                     <li style={{padding: "10px 10px 10px 20px", listStyle: "none", color:"white", cursor: "pointer"}} onClick={() => {this.logOut()}}><img src="../imgs/icons/logout.png" height="15px" /> LOG OUT</li>
                 </div>
                 </div>

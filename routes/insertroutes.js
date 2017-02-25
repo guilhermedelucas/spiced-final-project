@@ -40,7 +40,7 @@ var diskStorage = multer.diskStorage({
         callback(null, dirname + '/public/uploads');
     },
     filename: function(req, file, callback) {
-        callback(null, Date.now() + '_' + Math.floor(Math.random() * 99999999) + '_' + file.originalname);
+        callback(null, Date.now() + '_' + Math.floor(Math.random() * 99999999) + file.originalname.toLowerCase());
     }
 });
 

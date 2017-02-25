@@ -6,7 +6,7 @@ export default class MessagesNavBar extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            activeItem: 'Received'
+            activeItem: 'from'
         };
     }
 
@@ -19,10 +19,10 @@ export default class MessagesNavBar extends React.Component {
       const { activeItem } = this.state
 
       return (
-        <div>
+        <div style={{paddingBottom: "10px"}}>
           <Menu pointing secondary>
-            <Menu.Item name="Received" active={activeItem === 'Received'} onClick={() => this.handleItemClick("Received")} />
-            <Menu.Item name="Sent" active={activeItem === 'Sent'} onClick={() => this.handleItemClick("Sent")} />
+            <Menu.Item name="Received" active={activeItem === 'from'} onClick={() => this.handleItemClick("from")} />
+            <Menu.Item name="Sent" active={activeItem === 'to'} onClick={() => this.handleItemClick("to")} />
           </Menu>
         </div>
       )

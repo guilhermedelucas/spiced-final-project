@@ -20,8 +20,8 @@ export default class List extends React.Component {
                             { item.artist ? (
                                 <span className='artist'><Label color='red' horizontal>Artist:</Label> <Link to={"/results/artist=" + item.artist}>{item.artist}</Link></span>) : null }
                             { item.author ? (
-                                <span className='author'><Label color='red' horizontal>Author:</Label> <Link to={"/results/author=" + item.author}>{item.author}  </Link><Label color='red' horizontal>Publisher:</Label> {item.publisher}</span>) : null}
-                            { item.director ? (<span className='director'><Label color='red' horizontal>Director:</Label> {item.director}  <Label color='red' horizontal>Actors:</Label> {item.actors}</span>) : null}
+                                <span className='author'><Label color='red' horizontal>Author:</Label> <Link to={"/results/author=" + item.author}>{item.author}  </Link><Label color='red' horizontal>Publisher:</Label> {item.publisher || "Not informed"}</span>) : null}
+                            { item.director ? (<span className='director'><Label color='red' horizontal>Director:</Label> {item.director}  <Label color='red' horizontal>Actors:</Label> {item.actors  || "Not informed"}</span>) : null}
                         </Item.Meta>
                         <Item.Description><Link to={'/results/collection=' + item.collection + "&genre=" + item.genre}>{item.genre}</Link> > <Link to ={"/results/platform=" + item.platform}>{item.platform} </Link> <Link to={'/results/collection=' + item.collection + '&media=' + item.media}>{item.media} </Link> {item.pages}</Item.Description>
                     </Item.Content>
@@ -42,7 +42,7 @@ export default class List extends React.Component {
                         <Card.Description><Link to={'/results/collection=' + item.collection + "&genre=" + item.genre}>{item.genre}</Link> > <Link to ={"/results/platform=" + item.platform}>{item.platform}</Link> <Link to={'/results/collection=' + item.collection + '&media=' +  item.media}>{item.media}</Link> {item.pages}</Card.Description>
                     </Card.Content>
                     <Card.Content extra>
-                        <a><Icon name='user' />10 Friends</a>
+                        <a><Icon name='user' />0 Likes</a>
                     </Card.Content>
                 </Card>
             )
